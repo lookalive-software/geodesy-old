@@ -1,59 +1,49 @@
-function addclockface(target, unitsize, norm, angle){
-    let {width, height} = target.getClientRects()[0]
+function addclockface(target, unitsize, elements){
+    let container = target.lastElementChild.getClientRects()[0]
+    let parentheight = container.height
+    let parentwidth = container.width
+    
+    
+    //unitsize is a multiplier for all the dimensions, maybe 100 is a good start (100px grid)
+    //norm is the key of the elements object, it gets evald and sorted
+    //angle is the atan of y / x. 
+    
+   // so construct the face, but then set the transform rotate per element
+   // the whole point of this is that the grid can be painted one element at a time from the center out.
+    
+    // when x is 0, that's atan(infinity)-> Pi/2 radians
 
     target.lastElementChild.shadowRoot.innerHTML = elementary([
         {style: {
             "face, arm, hand": {
                 display: "block",
                 position: "absolute",
-                background: "rgba(0,0,0,0.5)",
+                background: "rgba(0,0,0,0)",
                 height: `${unitsize}px`,
                 width:`${unitsize}px`
             },
             arm: {
-                height: norm + 'px',
-                "transform-origin": `${unitsize / 2}px ${unitsize / 2}px`,
-                transform: `rotate(calc(${angle}deg))`
+                "transform-origin": `${unitsize / 2}px ${unitsize / 2}px`
             },
             face: {
-                top: `${(height - unitsize) / 2}px` ,
-                left: `${(width - unitsize) / 2}px`
+                top: `${(parentheight - unitsize) / 2}px` ,
+                left: `${(parentwidth - unitsize) / 2}px`
             },
             hand: {
-                bottom: 0
+                bottom: 0,
+              background: "rgba(0,.5,0,.5)"
             }
         }},
-        {face: [
-            {arm: [
-               { hand: [] }
-            ]}
-        ]}
+        {face: Object.entries(coords)
+         .map(([norm, xypairs]) => xypairs
+         .map(([x,y]) => ({arm: {
+                style:{
+                    height: `${(eval(norm) * unitsize) + unitsize}px`,
+                    transform: `rotate(${Math.atan2(y,x)}rad)`
+                },
+                childNodes: [{hand:{style:{transform: `rotate(${Math.atan2(-y,x)}rad)`}}}]
+            }}))
+        )
+        }
     ])
 }
-
-// function addclockhand(target){
-//     var face = target.querySelector('face')
-//     face.appendChild(elementary([
-
-//     ]))
-    
-// }
-
-/*
-<div id="unitsq" style="
-	background: rgba(0,0,0,0.5);
-    height: 100px; width: 100px;
-    position: absolute; left: 350; top: 250px;"
->
-	<div id="pendulum" style="
-    	background:rgba(0,0,0,0.5);
-    	height: 300px; width: 100px;
-        transform: rotate(0deg);
-        transform-origin: 50px 50px;
-    ">
-    	<div id="weight" style="background: rgba(0,0,100,0.5);
-    height: 100px; width: 100px; position:absolute; bottom:0;">
-    </div>
-
-</div>
-*/
