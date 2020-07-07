@@ -1,5 +1,3 @@
-"use strict";
-
 var empty_elements = [
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr", "!DOCTYPE html"
 ];
@@ -9,9 +7,7 @@ var empty_elements = [
  * An array is recursed over, an object is made into an HTMLElement or an HTMLStyleELement
  * Null is turned into a blank string, bool, numbers and strings are returned as strings.
  */
-if (typeof module != "undefined") {
-    module.exports = elementary;
-}
+
 function elementary(el) {
     if (el instanceof Array) {
         return el.map(elementary).join('');

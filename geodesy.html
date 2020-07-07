@@ -1,0 +1,72 @@
+<body>
+    <script src="./elem.js"></script>
+    <script src="./algebrite.bundle-for-browser.js"></script>
+    <script src="./clockhands.js"></script>
+    <script>
+    function norm(pt){
+        console.log( Algebrite.run("abs([" + pt + "])"), pt)
+        return Algebrite.run("abs([" + pt + "])")
+        // return Math.sqrt(pt[0] * pt[0] + pt[1] * pt[1])
+    }
+
+    hexpath = "100% 50%,75% 93.3013%,25% 93.3013%,0% 50%,25% 6.69873%,75% 6.69873%"
+    range = 2
+
+    multipliers = JSON.stringify(
+        Array.from(Array(1 + 2 * range), (_,i) => 
+        Array.from(Array(1 + 2 * range), (_, j) => 
+            [i - range, j - range]
+        )
+    ).flat())
+
+    basis = `[[1,0],[1/2, sqrt(3)/2]]`
+    // basis = `[[1,0], [0,1]]`
+    shells = {}
+
+    num  = "\\d" 
+    plus = "\\+"
+    min  = "\\-"
+    mult = "\\*"
+    div  = "\\/"
+    pow  = "\\^"
+    comma = "\\,"
+    parens = "\\(\\)"
+
+    with(Algebrite){
+        Array.from(
+            run(
+                `dot(${multipliers}, ${basis})`
+            ).match(new RegExp(
+                '[' + num + plus + min + mult + div + pow + parens + ']+' +
+                 comma + 
+                '[' + num + plus + min + mult + div + pow + parens + ']+' ,
+                'g'))
+        ).map(e => {
+            let norm = run(`abs([${e}])`)
+            e = e.split(',')
+            console.log(float(arctan(...e)).d, float(e[0]).d, float(e[1]).d)
+            if(shells[norm]) shells[norm].push(e)
+            else shells[norm] = [e]
+        })
+    
+        console.log(shells)
+    }
+    
+
+
+    // , [[1,0], [0.5, 0.866025]]).map(norm))
+
+        // addclockface(document.body, 100, {
+        //     "3 * Math.sqrt(2)": [[-3, -3], [-3, 3], [3,  -3], [3, 3]],
+        //     "Math.sqrt(13)":    [[-3, -2], [-3, 2], [-2, -3], [-2, 3], [2, -3], [2, 3], [3, -2], [3, 2]],
+        //     "Math.sqrt(10)":    [[-3, -1], [-3, 1], [-1, -3], [-1, 3], [1, -3], [1, 3], [3, -1], [3, 1]],
+        //     "3":           [[-3,  0], [0, -3], [0,   3], [3,  0]],
+        //     "2 * Math.sqrt(2)": [[-2, -2], [-2, 2], [2,  -2], [2,  2]],
+        //     "Math.sqrt(5)":     [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]],
+        //     "2":           [[-2,  0], [0, -2], [0,   2], [2,  0]],
+        //     "Math.sqrt(2)":     [[-1, -1], [-1, 1], [1,  -1], [1,  1]],
+        //     "1":           [[-1,  0], [0, -1], [0,   1], [1,  0]],
+        //     "0": [[0,0]]
+        // })
+    </script>
+</body>
