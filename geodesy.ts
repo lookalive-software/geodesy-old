@@ -1,11 +1,11 @@
 const λ = require('algebrite')
 const octostars = require('./octostars.json')
 
-function table(x: number ,y: number): number[][] {
+function table(x: number ,y: number): string[][] {
     let grid = new Array
     for(var i = -x; i <= x; i++){
         for(var j = -y; j <= y; j++){
-            grid.push([i,j])
+            grid.push([String(i),String(j)])
         }
     }
     return grid
@@ -33,10 +33,31 @@ function matrix2array(matrix: string): string[][]{
         'g')), result => result.split(','))
 }
 
-function norm(xypair: string[]): number{
-    return λ.float(λ.abs(`[${xypair[0]},${xypair[1]}]`)).d
+function toNumber(λstring: string): number {
+    return λ.float(λstring).d
+}
+
+function spin(xypair: string[]): string {
+    return λ.run(`arctan(${xypair[0]},${xypair[1]})`)
+}
+
+function norm(xypair: string[]): string {
+    return λ.run(`abs([${xypair[0]},${xypair[1]}])`)
 }
 
 function dot(dimensions: string[][], basis: string[][]): string {
     return λ.run(`dot(${array2matrix(dimensions)},${array2matrix(basis)})`)
 }
+
+let basispts = matrix2array(
+    dot(
+        table(2,2),
+        octostars.geodesy[0].basis
+    )
+)
+// for every point 
+console.log(
+    basispts,
+    basispts.map(norm),
+    basispts.map(spin)
+)

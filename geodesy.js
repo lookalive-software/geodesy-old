@@ -4,7 +4,7 @@ function table(x, y) {
     var grid = new Array;
     for (var i = -x; i <= x; i++) {
         for (var j = -y; j <= y; j++) {
-            grid.push([i, j]);
+            grid.push([String(i), String(j)]);
         }
     }
     return grid;
@@ -27,9 +27,18 @@ function matrix2array(matrix) {
         comma +
         '[' + num + plus + min + mult + div + pow + parens + ']+', 'g')), function (result) { return result.split(','); });
 }
+function toNumber(λstring) {
+    return λ.float(λstring).d;
+}
+function spin(xypair) {
+    return λ.run("arctan(" + xypair[0] + "," + xypair[1] + ")");
+}
 function norm(xypair) {
-    return λ.float(λ.abs("[" + xypair[0] + "," + xypair[1] + "]")).d;
+    return λ.run("abs([" + xypair[0] + "," + xypair[1] + "])");
 }
 function dot(dimensions, basis) {
     return λ.run("dot(" + array2matrix(dimensions) + "," + array2matrix(basis) + ")");
 }
+var basispts = matrix2array(dot(table(2, 2), octostars.geodesy[0].basis));
+// for every point 
+console.log(basispts, basispts.map(norm), basispts.map(spin));
