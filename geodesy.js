@@ -1,5 +1,6 @@
 var λ = require('algebrite');
 var octostars = require('./octostars.json');
+module.exports = geodesy;
 function table(x, y) {
     var grid = new Array;
     for (var i = -x; i <= x; i++) {
@@ -56,26 +57,33 @@ function applyShift(dimensions, shift) {
     }
     return dimensionsClone;
 }
-var basispts = M(dot(applyShift(table(4, 4), octostars.geodesy[0].shift), octostars.geodesy[0].basis));
-var norms = {};
-for (var _i = 0, basispts_1 = basispts; _i < basispts_1.length; _i++) {
-    var xypair = basispts_1[_i];
-    var x = xypair[0], y = xypair[1];
-    var thisnorm = norm(x, y);
-    var thisspin = spin(x, y);
-    var tile = {
-        x: x, y: y,
-        "norm": thisnorm,
-        "spin": thisspin
-    };
-    if (norms[thisnorm]) {
-        norms[thisnorm].push(tile);
+function geodesy(xSize, ySize, shape) {
+    var basis = shape.basis, shift = shape.shift, polygon = shape.polygon;
+    var basispts = M(dot(applyShift(table(xSize, ySize), shift), basis));
+    var norms = {};
+    for (var _i = 0, basispts_1 = basispts; _i < basispts_1.length; _i++) {
+        var xypair = basispts_1[_i];
+        var x = xypair[0], y = xypair[1];
+        var thisnorm = norm(x, y);
+        var thisspin = spin(x, y);
+        var tile = {
+            x: x, y: y,
+            "norm": thisnorm,
+            "spin": thisspin
+        };
+        if (norms[thisnorm]) {
+            norms[thisnorm].push(tile);
+        }
+        else {
+            norms[thisnorm] = [tile];
+        }
     }
-    else {
-        norms[thisnorm] = [tile];
-    }
+    return Object.values(norms);
 }
-for (var _a = 0, _b = Object.values(norms); _a < _b.length; _a++) {
-    var el = _b[_a];
-    console.log(el.sort(function (a, b) { return a.spin - b.spin; }));
-}
+// function orderFromCenter(){
+//     for(var el of Object.values(norms)){
+//         console.log(
+//             (el as Tile[]).sort((a,b) => a.spin - b.spin)
+//         )
+//     }
+// }

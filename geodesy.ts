@@ -1,6 +1,8 @@
 const λ = require('algebrite')
 const octostars = require('./octostars.json')
 
+module.exports = geodesy
+
 function table(x: number ,y: number): string[][] {
     let grid = new Array
     for(var i = -x; i <= x; i++){
@@ -73,15 +75,13 @@ function applyShift(dimensions: string[][], shift: string[]): string[][]{
     return dimensionsClone
 }   
 
-let basispts = M(
-    dot(
-        applyShift(table(4,4), octostars.geodesy[0].shift),
-        octostars.geodesy[0].basis
-    )
-)
-let norms = {}
-// I can push 
-// {norm, spin, polygon#, x, y }
+
+interface Shape {
+    basis: string[][],
+    shift: string[],
+    polygon: string[][]
+}
+
 interface Tile {
     x: string,
     y: string,
@@ -89,26 +89,43 @@ interface Tile {
     spin: number
 }
 
-for(var xypair of basispts){
-    var [x,y] = xypair
-    var thisnorm = norm(x,y)
-    var thisspin = spin(x,y)
+function geodesy(xSize:number, ySize:number, shape:Shape): Tile[] {
+    let {basis, shift, polygon} = shape
 
-    var tile:Tile = {
-        x, y,
-        "norm": thisnorm,
-        "spin": thisspin
-    }
-
-    if(norms[thisnorm]){
-        norms[thisnorm].push(tile)
-    } else {
-        norms[thisnorm] = [tile]
-    }
-}
-
-for(var el of Object.values(norms)){
-    console.log(
-        (el as Tile[]).sort((a,b) => a.spin - b.spin)
+    let basispts = M(
+        dot(
+            applyShift(table(xSize, ySize), shift),
+            basis
+        )
     )
+    
+    let norms = {}
+
+    for(var xypair of basispts){
+        var [x,y] = xypair
+        var thisnorm = norm(x,y)
+        var thisspin = spin(x,y)
+    
+        var tile:Tile = {
+            x, y,
+            "norm": thisnorm,
+            "spin": thisspin
+        }
+    
+        if(norms[thisnorm]){
+            norms[thisnorm].push(tile)
+        } else {
+            norms[thisnorm] = [tile]
+        }
+    }
+
+    return Object.values(norms)
 }
+
+// function orderFromCenter(){
+//     for(var el of Object.values(norms)){
+//         console.log(
+//             (el as Tile[]).sort((a,b) => a.spin - b.spin)
+//         )
+//     }
+// }
