@@ -31,7 +31,8 @@ function toNumber(λstring) {
     return λ.float(λstring).d;
 }
 function spin(xypair) {
-    return λ.run("arctan(" + xypair[0] + "," + xypair[1] + ")");
+    return Math.atan2(toNumber(xypair[0]), toNumber(xypair[1]));
+    // return λ.run(`arctan(${xypair[0]},${xypair[1]})`)
 }
 function norm(xypair) {
     return λ.run("abs([" + xypair[0] + "," + xypair[1] + "])");
@@ -40,5 +41,16 @@ function dot(dimensions, basis) {
     return λ.run("dot(" + array2matrix(dimensions) + "," + array2matrix(basis) + ")");
 }
 var basispts = matrix2array(dot(table(2, 2), octostars.geodesy[0].basis));
+var norms = {};
+for (var _i = 0, basispts_1 = basispts; _i < basispts_1.length; _i++) {
+    var xypair = basispts_1[_i];
+    var thisnorm = norm(xypair);
+    if (norms[thisnorm]) {
+        norms[thisnorm].push([].concat(xypair, spin(xypair)));
+    }
+    else {
+        norms[thisnorm] = [[].concat(xypair, spin(xypair))];
+    }
+}
 // for every point 
-console.log(basispts, basispts.map(norm), basispts.map(spin));
+console.log(norms);

@@ -37,8 +37,9 @@ function toNumber(λstring: string): number {
     return λ.float(λstring).d
 }
 
-function spin(xypair: string[]): string {
-    return λ.run(`arctan(${xypair[0]},${xypair[1]})`)
+function spin(xypair: string[]): number {
+    return Math.atan2(toNumber(xypair[0]), toNumber(xypair[1]))
+    // return λ.run(`arctan(${xypair[0]},${xypair[1]})`)
 }
 
 function norm(xypair: string[]): string {
@@ -55,9 +56,18 @@ let basispts = matrix2array(
         octostars.geodesy[0].basis
     )
 )
+let norms = {}
+
+for(var xypair of basispts){
+    var thisnorm = norm(xypair)
+    if(norms[thisnorm]){
+        norms[thisnorm].push([].concat(xypair, spin(xypair)))
+    } else {
+        norms[thisnorm] = [[].concat(xypair, spin(xypair))]
+    }
+}
 // for every point 
 console.log(
-    basispts,
-    basispts.map(norm),
-    basispts.map(spin)
+    norms
 )
+
