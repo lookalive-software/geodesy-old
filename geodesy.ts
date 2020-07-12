@@ -1,5 +1,17 @@
 const λ = require('algebrite')
-const octostars = require('./octostars.json')
+
+interface Shape {
+    basis: string[][],
+    shift: string[],
+    polygon: string[][]
+}
+
+interface Tile {
+    x: string,
+    y: string,
+    norm: string,
+    spin: number
+}
 
 module.exports = geodesy
 
@@ -74,20 +86,6 @@ function applyShift(dimensions: string[][], shift: string[]): string[][]{
     }
     return dimensionsClone
 }   
-
-
-interface Shape {
-    basis: string[][],
-    shift: string[],
-    polygon: string[][]
-}
-
-interface Tile {
-    x: string,
-    y: string,
-    norm: string,
-    spin: number
-}
 
 function geodesy(xSize:number, ySize:number, shape:Shape): Tile[] {
     let {basis, shift, polygon} = shape

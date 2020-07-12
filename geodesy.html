@@ -1,26 +1,120 @@
 <body>
+    <style>div {width: 100; height: 100; background: blue}</style>
+    <div id="i"></div>
+    <div id="j"></div>
     <script src="./elem.js"></script>
     <script src="./algebrite.bundle-for-browser.js"></script>
     <script src="./clockhands.js"></script>
     <script>
     function norm(pt){
-        console.log( Algebrite.run("abs([" + pt + "])"), pt)
-        return Algebrite.run("abs([" + pt + "])")
         // return Math.sqrt(pt[0] * pt[0] + pt[1] * pt[1])
+        return Algebrite.run("abs([" + pt + "])")
     }
 
+
+
     hexpath = "100% 50%,75% 93.3013%,25% 93.3013%,0% 50%,25% 6.69873%,75% 6.69873%"
-    range = 2
+    gridpath = "100% 0%, 100% 100%, 0% 100%, 0% 0%"
+    m6basis = `[[1,0],[1/2, sqrt(3)/2]]`
+    m4basis = `[[1,0], [0,1]]`;
 
-    multipliers = JSON.stringify(
-        Array.from(Array(1 + 2 * range), (_,i) => 
-        Array.from(Array(1 + 2 * range), (_, j) => 
-            [i - range, j - range]
-        )
-    ).flat())
 
-    basis = `[[1,0],[1/2, sqrt(3)/2]]`
-    // basis = `[[1,0], [0,1]]`
+    function vertices2clippath(vertices){
+        /*
+        A little math and string concatenation
+        The polygon datastructure is x,y coordinates from a -1 to +1
+        I want to use them as percentages for CSS clip-path polygon. 
+        So I add 1, now the coords are from 0 to 2.
+        To get a percentage 0 to 100, I just multiply by 50.
+        Then add the percent sign and riffle the commas in to get CSS syntax
+        */
+        with(Algebrite){
+            return 'polygon(' + vertices.map(
+                pt => pt.map(
+                    n => float(run(`(${n} + 1) * 50`)).d + '%'
+                ).join(' ')
+            ).join(',') + ')'
+        }
+    }
+
+    function transformverts(vertices, Δx, Δy){
+        with(Algebrite){
+                // append 1 to every point
+                transform = `[[1,0,0],[0,1,0],[${Δx}, ${Δy},1]`
+                // take everything but the last one 
+        }
+    }
+
+
+    octagon = 
+        [
+            [`1/sqrt(2)`, `0`],
+            [`1/2`,`1/2`],
+            [`0`, `1/sqrt(2)`],
+            [`-1/2`,`1/2`],
+            [`-1/sqrt(2)`,`0`],
+            [`-1/2`,`-1/2`],
+            [`0`,`-1/sqrt(2)`],
+            [`1/2`,`-1/2`]
+        ]
+    octostar = 
+        [
+            [`1/2`,`1/2`],
+            [`0`,`1 - 1/sqrt(2)`],
+            [`-1/2`,`1/2`],
+            [`-1 + 1/sqrt(2)`,`0`],
+            [`-1/2`, `-1/2`],
+            [`0`,`- 1 + 1/sqrt(2)`],
+            [`1/2`, `-1/2`],
+            [`1 - 1/sqrt(2)`,`0`],
+        ]   
+
+    i.style.clipPath = vertices2clippath(octagon)
+    j.style.clipPath = vertices2clippath(octostar)
+    // squares = {
+    //     "[[1,0], [0,1]]":"100% 0%, 100% 100%, 0% 100%, 0% 0%"
+    // }
+
+    // hexes = {
+    //     "[[1,0],[1/2, sqrt(3)/2]]":  "100% 50%,75% 93.3013%,25% 93.3013%,0% 50%,25% 6.69873%,75% 6.69873%"
+    // }
+
+    // style = {
+    //     "[basis=\"[[1,0],[1/2, sqrt(3)/2]]\"]": {
+    //         "clip-path": "100% 50%,75% 93.3013%,25% 93.3013%,0% 50%,25% 6.69873%,75% 6.69873%"
+    //     }
+    // }
+
+    // apply clip-
+    // index, basis, norm, spin
+
+    // ({"x-tile": {
+    //     "style": {
+    //         "transform":`rotate(${norm}rad)`
+    //     }
+    // }})
+
+    // if you've got more than one basis, 
+    shells = [
+        "100% 0%, 100% 100%, 0% 100%, 0% 0%",
+        "100% 0%, 100% 100%, 0% 100%, 0% 0%",
+        "100% 0%, 100% 100%, 0% 100%, 0% 0%",
+        "100% 0%, 100% 100%, 0% 100%, 0% 0%",
+    ]
+
+    function table(x,y/*number*/){
+        let grid = new Array
+        for(var i = -x; i <= x; i++){
+            for(var j = -y; j <= y; j++){
+                grid.push([i,j])
+            }
+        }
+        return grid
+    }
+    
+
+    multipliers = JSON.stringify(table(2,2))
+
     shells = {}
 
     num  = "\\d" 
@@ -32,10 +126,14 @@
     comma = "\\,"
     parens = "\\(\\)"
 
+    // take dimensions and basis and return array of points
+    // take a point and return its norm and spin
+    // take a grid and shift it by some x and y
+
     with(Algebrite){
         Array.from(
             run(
-                `dot(${multipliers}, ${basis})`
+                `dot(${multipliers}, ${m6basis})`
             ).match(new RegExp(
                 '[' + num + plus + min + mult + div + pow + parens + ']+' +
                  comma + 
@@ -44,14 +142,12 @@
         ).map(e => {
             let norm = run(`abs([${e}])`)
             e = e.split(',')
-            console.log(float(arctan(...e)).d, float(e[0]).d, float(e[1]).d)
+            console.log( λ.float( λ.arctan(...e)).d,  λ.float(e[0]).d,  λfloat(e[1]).d)
             if(shells[norm]) shells[norm].push(e)
             else shells[norm] = [e]
         })
-    
         console.log(shells)
     }
-    
 
 
     // , [[1,0], [0.5, 0.866025]]).map(norm))

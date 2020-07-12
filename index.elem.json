@@ -1,0 +1,6 @@
+[
+    {"h1": ["hello"]},
+    {"script":{
+        "src": "/node_modules/algebrite/dist/algebrite.js"
+    }}
+]
