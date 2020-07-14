@@ -54,11 +54,12 @@ module.exports = function geodesy(element) {
         normData[norm];
     }
     return [
-        { "style": Object.assign.apply(Object, __spreadArrays([{ "geodesy, norm, spin, polygon": {
+        { "style": Object.assign.apply(Object, __spreadArrays([{ "geodesy, norm, spin, scale, polygon, target": {
                         "display": "block",
                         "position": "absolute",
                         "height": radius,
-                        "width": radius
+                        "width": radius,
+                        "pointer-events": "none"
                     } }, { "geodesy": {
                         "top": "Calc(50vh - (" + radius + " / 2))",
                         "left": "Calc(50vw - (" + radius + " / 2))"
@@ -67,7 +68,18 @@ module.exports = function geodesy(element) {
                         "transform-origin": "Calc(" + radius + " / 2) Calc(" + radius + " / 2)",
                         "height": "inherit"
                     } }, { "polygon": {
+                        // "bottom": "0",
+                        "background": "#aaa"
+                    } },
+                { "scale": {
+                        "transform": "scale(2)",
                         "bottom": "0"
+                    } },
+                { "target": {
+                        "pointer-events": "all"
+                    } },
+                { "target:hover": {
+                        "background": "red"
                     } }], motifData.map(function (shape, shapeIndex) {
                 var _a;
                 return (_a = {},
@@ -87,10 +99,16 @@ module.exports = function geodesy(element) {
                             "spin": {
                                 "style": { "transform": "rotate(" + spin.spin + "rad)" },
                                 "childNodes": [{
-                                        "polygon": {
-                                            "polygon": String(spin.polygon),
-                                            "style": { "transform": "scale(2) rotate(Calc(-1 * " + spin.spin + "rad))" }
-                                        }
+                                        "scale": [{
+                                                "polygon": {
+                                                    "polygon": String(spin.polygon),
+                                                    "style": { "transform": "rotate(Calc(-1 * " + spin.spin + "rad))" },
+                                                    "childNodes": [
+                                                        { "target": {} }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }]
                             }
                         }); })

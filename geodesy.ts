@@ -90,11 +90,12 @@ module.exports = function geodesy(element: GeodesyElement): any {
     }
     return [
         {"style": Object.assign(
-            {"geodesy, norm, spin, polygon":{
+            {"geodesy, norm, spin, scale, polygon, target":{
                 "display": "block",
                 "position": "absolute",
                 "height": radius,
                 "width": radius,
+                "pointer-events": "none"
             }},
             {"geodesy":{
                 "top": `Calc(50vh - (${radius} / 2))`,
@@ -105,7 +106,17 @@ module.exports = function geodesy(element: GeodesyElement): any {
                 "height":"inherit"
             }},
             {"polygon": {
+                "background": "#aaa"
+            }},
+            {"scale": {
+                "transform":"scale(2)",
                 "bottom": "0"
+            }},
+            {"target":{
+                "pointer-events":"all"
+            }},
+            {"target:hover": {
+                "background": "red"
             }},
             ...motifData.map((shape, shapeIndex) => ({
                 [`[polygon="${shapeIndex}"]`]: {
@@ -124,13 +135,19 @@ module.exports = function geodesy(element: GeodesyElement): any {
                         "spin": {
                             "style": {"transform": `rotate(${spin.spin}rad)`},
                             "childNodes": [{
-                                "polygon":{
-                                    "polygon": String(spin.polygon),
-                                    "style": {"transform": `scale(2) rotate(Calc(-1 * ${spin.spin}rad))`},
-                                }
-                            }]
-                        }
-                    }))
+                                "scale": [{
+                                    "polygon":{
+                                        "polygon": String(spin.polygon),
+                                        "style": {"transform": `rotate(Calc(-1 * ${spin.spin}rad))`},
+                                        "childNodes":[
+                                            {"target":{
+
+                                            }}
+                                        ]
+                                    }}
+                                ]
+                        }]
+                    }}))
                 }
             }))
         }}
