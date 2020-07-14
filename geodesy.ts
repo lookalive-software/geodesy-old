@@ -125,7 +125,8 @@ module.exports = function geodesy(element: GeodesyElement): any {
                             "style": {"transform": `rotate(${spin.spin}rad)`},
                             "childNodes": [{
                                 "polygon":{
-                                    "polygon": String(spin.polygon)
+                                    "polygon": String(spin.polygon),
+                                    "style": {"transform": `scale(2) rotate(Calc(-1 * ${spin.spin}rad))`},
                                 }
                             }]
                         }
