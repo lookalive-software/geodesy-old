@@ -23,6 +23,7 @@ module.exports = function geodesy(element) {
     var size = parseInt(bitmask, 16);
     var unitlength = parseInt(radius, 10);
     // fetch motif descriptor
+    delete require.cache[require.resolve('./motif/' + motif + '.json')];
     var motifData = require('./motif/' + motif + '.json')['motif'];
     var normData = {};
     // for(var shape of motifData){
@@ -37,6 +38,7 @@ module.exports = function geodesy(element) {
                 x: x, y: y,
                 "norm": thisnorm,
                 "spin": thisspin,
+                "scale": shape.scale,
                 polygon: motifIndex
             };
             if (normData[thisnorm]) {
@@ -47,12 +49,11 @@ module.exports = function geodesy(element) {
             }
         });
     });
-    // each key of normData is the norm for that set of spin/polygons
-    // each spin element carries 
-    for (var _i = 0, _b = Object.keys(normData); _i < _b.length; _i++) {
-        var norm = _b[_i];
-        normData[norm];
-    }
+    // // each key of normData is the norm for that set of spin/polygons
+    // // each spin element carries 
+    // for(var norm of Object.keys(normData)){
+    //     normData[norm]
+    // }
     return [
         { "style": Object.assign.apply(Object, __spreadArrays([{ "geodesy, norm, spin, scale, polygon, target": {
                         "display": "block",
@@ -68,11 +69,9 @@ module.exports = function geodesy(element) {
                         "transform-origin": "Calc(" + radius + " / 2) Calc(" + radius + " / 2)",
                         "height": "inherit"
                     } }, { "polygon": {
-                        // "bottom": "0",
                         "background": "#aaa"
                     } },
                 { "scale": {
-                        "transform": "scale(2)",
                         "bottom": "0"
                     } },
                 { "target": {
@@ -83,8 +82,11 @@ module.exports = function geodesy(element) {
                     } }], motifData.map(function (shape, shapeIndex) {
                 var _a;
                 return (_a = {},
-                    _a["[polygon=\"" + shapeIndex + "\"]"] = {
+                    _a["[polygon=\"" + shapeIndex + "\"] polygon, [polygon=\"" + shapeIndex + "\"] target"] = {
                         "clip-path": "" + polygon2clippath(shape.polygon)
+                    },
+                    _a["scale[polygon=\"" + shapeIndex + "\"]"] = {
+                        "transform": "scale(" + N(shape.scale) + ")"
                     },
                     _a);
             }))) },
@@ -99,16 +101,17 @@ module.exports = function geodesy(element) {
                             "spin": {
                                 "style": { "transform": "rotate(" + spin.spin + "rad)" },
                                 "childNodes": [{
-                                        "scale": [{
-                                                "polygon": {
-                                                    "polygon": String(spin.polygon),
-                                                    "style": { "transform": "rotate(Calc(-1 * " + spin.spin + "rad))" },
-                                                    "childNodes": [
-                                                        { "target": {} }
-                                                    ]
-                                                }
-                                            }
-                                        ]
+                                        "scale": {
+                                            "polygon": String(spin.polygon),
+                                            "childNodes": [
+                                                { "polygon": {
+                                                        "style": { "transform": "rotate(Calc(-1 * " + spin.spin + "rad))" },
+                                                        "childNodes": [
+                                                            { "target": {} }
+                                                        ]
+                                                    } }
+                                            ]
+                                        }
                                     }]
                             }
                         }); })

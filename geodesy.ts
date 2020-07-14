@@ -12,6 +12,7 @@ const λ = require('algebrite')
 interface Shape {
     basis: string[][],
     offset: string[],
+    scale: string,
     polygon: string[][]
 }
 
@@ -20,6 +21,7 @@ interface Tile {
     y: string,
     norm: string, /* I don't want to throw away the math of norm, but I'll need to convert it to number for sorting */
     spin: number, /* for spin I'm using Math.atan2 because it figures out +/- for me, and it returns a javascript number */
+    scale: string,
     polygon: number, /* just 0 1 or 2... the index of the original motif list. */
 }
 
@@ -49,6 +51,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
     let size = parseInt(bitmask, 16)
     let unitlength = parseInt(radius, 10)
     // fetch motif descriptor
+    delete require.cache[require.resolve('./motif/' + motif + '.json')];
     let motifData = require('./motif/' + motif + '.json')['motif'] as Shape[]
 
     let normData:NormData = {}
@@ -72,6 +75,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
                 x, y,
                 "norm": thisnorm,
                 "spin": thisspin,
+                "scale": shape.scale,
                 polygon: motifIndex
             }
         
@@ -83,11 +87,11 @@ module.exports = function geodesy(element: GeodesyElement): any {
         })
     })
 
-    // each key of normData is the norm for that set of spin/polygons
-    // each spin element carries 
-    for(var norm of Object.keys(normData)){
-        normData[norm]
-    }
+    // // each key of normData is the norm for that set of spin/polygons
+    // // each spin element carries 
+    // for(var norm of Object.keys(normData)){
+    //     normData[norm]
+    // }
     return [
         {"style": Object.assign(
             {"geodesy, norm, spin, scale, polygon, target":{
@@ -107,20 +111,26 @@ module.exports = function geodesy(element: GeodesyElement): any {
             }},
             {"polygon": {
                 "background": "#aaa"
+                // shadow blur goes here
+                // shadow color goes here
             }},
             {"scale": {
-                "transform":"scale(2)",
                 "bottom": "0"
             }},
             {"target":{
                 "pointer-events":"all"
+                // shadow offset goes here
+                // polygon color goes here
             }},
             {"target:hover": {
                 "background": "red"
             }},
             ...motifData.map((shape, shapeIndex) => ({
-                [`[polygon="${shapeIndex}"]`]: {
+                [`[polygon="${shapeIndex}"] polygon, [polygon="${shapeIndex}"] target`]: {
                     "clip-path": `${polygon2clippath(shape.polygon)}`
+                },
+                [`scale[polygon="${shapeIndex}"]`]: {
+                    "transform":`scale(${N(shape.scale)})`
                 }
             }))
         )},
@@ -135,19 +145,22 @@ module.exports = function geodesy(element: GeodesyElement): any {
                         "spin": {
                             "style": {"transform": `rotate(${spin.spin}rad)`},
                             "childNodes": [{
-                                "scale": [{
-                                    "polygon":{
-                                        "polygon": String(spin.polygon),
-                                        "style": {"transform": `rotate(Calc(-1 * ${spin.spin}rad))`},
-                                        "childNodes":[
-                                            {"target":{
+                                "scale": {
+                                    "polygon": String(spin.polygon),
+                                    "childNodes":[
+                                        {"polygon":{
+                                            "style": {"transform": `rotate(Calc(-1 * ${spin.spin}rad))`},
+                                            "childNodes":[
+                                                {"target":{
 
-                                            }}
-                                        ]
-                                    }}
-                                ]
-                        }]
-                    }}))
+                                                }}
+                                            ]
+                                        }}
+                                    ]
+                                }
+                            }]
+                        }
+                    }))
                 }
             }))
         }}
