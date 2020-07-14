@@ -52,6 +52,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
     let unitlength = parseInt(radius, 10)
     // fetch motif descriptor
     delete require.cache[require.resolve('./motif/' + motif + '.json')];
+    // let [shadowTop, shadowLeft, backgroundColor, shadowColor, blur] = require('./motif/' + motif + '.json')['meta']['themes'][0]
     let motifData = require('./motif/' + motif + '.json')['motif'] as Shape[]
 
     let normData:NormData = {}
@@ -94,43 +95,47 @@ module.exports = function geodesy(element: GeodesyElement): any {
     // }
     return [
         {"style": Object.assign(
+            {":root":{
+                "--radius": radius,
+                "--scale": "1"
+            }},
             {"geodesy, norm, spin, scale, polygon, target":{
                 "display": "block",
                 "position": "absolute",
-                "height": radius,
-                "width": radius,
+                "height": "var(--radius)",
+                "width": "var(--radius)",
                 "pointer-events": "none"
             }},
             {"geodesy":{
-                "top": `Calc(50vh - (${radius} / 2))`,
-                "left": `Calc(50vw - (${radius} / 2))`
+                "top": `Calc(50vh - (var(--radius) / 2))`,
+                "left": `Calc(50vw - (var(--radius) / 2))`
             }},
             {"spin":{
-                "transform-origin": `Calc(${radius} / 2) Calc(${radius} / 2)`,
+                "transform-origin": `Calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
                 "height":"inherit"
             }},
             {"polygon": {
-                "background": "#aaa"
+                "bottom": "0",
+                "background": "#aaa",
+                "filter":"blur(3px)",
                 // shadow blur goes here
                 // shadow color goes here
             }},
-            {"scale": {
-                "bottom": "0"
-            }},
             {"target":{
-                "pointer-events":"all"
+                "pointer-events":"all",
+                // "clip-path": "inherit"
                 // shadow offset goes here
                 // polygon color goes here
+                "left":"3px",
+                "top":"3px",
+                "background":"white"
             }},
             {"target:hover": {
                 "background": "red"
             }},
             ...motifData.map((shape, shapeIndex) => ({
-                [`[polygon="${shapeIndex}"] polygon, [polygon="${shapeIndex}"] target`]: {
+                [`[polygon="${shapeIndex}"], [polygon="${shapeIndex}"] target`]: {
                     "clip-path": `${polygon2clippath(shape.polygon)}`
-                },
-                [`scale[polygon="${shapeIndex}"]`]: {
-                    "transform":`scale(${N(shape.scale)})`
                 }
             }))
         )},
@@ -139,26 +144,18 @@ module.exports = function geodesy(element: GeodesyElement): any {
             "childNodes": Object.keys(normData).map(norm => ({
                 "norm": {
                     "id": norm,
-                    "style": {"height": `Calc(${radius} * ${N(norm)} + ${radius})`},
+                    "style": {"height": `Calc(var(--radius) * ${N(norm)} + var(--radius))`},
                     "neighbors": normData[norm].length,
                     "childNodes": normData[norm].map(spin => ({
                         "spin": {
                             "style": {"transform": `rotate(${spin.spin}rad)`},
-                            "childNodes": [{
-                                "scale": {
+                            "childNodes":[
+                                {"polygon":{
                                     "polygon": String(spin.polygon),
-                                    "childNodes":[
-                                        {"polygon":{
-                                            "style": {"transform": `rotate(Calc(-1 * ${spin.spin}rad))`},
-                                            "childNodes":[
-                                                {"target":{
-
-                                                }}
-                                            ]
-                                        }}
-                                    ]
-                                }
-                            }]
+                                    "style": {"transform": `scale(Calc(var(--scale) * ${N(spin.scale)})) rotate(Calc(-1 * ${spin.spin}rad))`},
+                                    "childNodes":[{"target": {}}]
+                                }}
+                            ]
                         }
                     }))
                 }

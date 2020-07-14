@@ -1,7 +1,10 @@
 {
     "meta":{
         "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/octostar.nb",
-        "harmonic":["1"]
+        "harmonic":["1"],
+        "themes": [
+            ["10px","10px","gray","#0c0c0c","5.1px"]
+        ]
     },
     "motif":[
         {
