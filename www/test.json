@@ -1,0 +1,40 @@
+[
+    {"style":{
+        "geodesy, norm, spin, polygon":{
+            "display": "block",
+            "position": "absolute",
+            "height":"100px",
+            "width":"100px"
+        },
+        "spin":{
+            "transform-origin": "50px 50px",
+            "height":"inherit"
+        },
+        "[polygon=\"0\"]": {
+            "clip-path": "polygon(100% 100%...)"
+        },
+        "[polygon=\"1\"]": {
+            "clip-path": "polygon(100% 100%...)"
+        },
+        "[norm=\"sqrt(2)\"]": {
+            "height": "1.141..."
+        },
+        "[spin=\"3/4\"]": {
+            "transform":"rotate(0.75turn)"
+        }
+    }},
+    {"geodesy":{
+        "origin":"[0,0]",
+        "motif":"p4octagon",
+        "bitmask": "1a",
+        "unitradius": "100px",
+        "childNodes":[
+            {"norm":{
+                "norm":"sqrt(3)",
+                "childNodes": [
+
+                ]
+            }}
+        ]
+    }}
+]

@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/lookalive-software/geodesy#readme",
   "dependencies": {
-    "@lookalive/elementary": "^0.3.0",
+    "@lookalive/elementary": "^0.3.2",
     "@types/node": "^14.0.22",
     "algebrite": "^1.3.1",
     "typescript": "^3.9.6"

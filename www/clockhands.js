@@ -1,10 +1,10 @@
-function addclockface(target, unitsize, coords){
+function addclockface(target, unitsize, elements){
     let container = target.getClientRects()[0]
     let parentheight = container.height
     let parentwidth = container.width
     
     //unitsize is a multiplier for all the dimensions, maybe 100 is a good start (100px grid)
-    //norm is the key of the coords object, it gets evald and sorted
+    //norm is the key of the elements object, it gets evald and sorted
     //angle is the atan of y / x. 
     
    // so construct the face, but then set the transform rotate per element
@@ -22,7 +22,7 @@ function addclockface(target, unitsize, coords){
                 },
                 childNodes: [{hand:{style:{transform: `rotate(${Math.atan2(-y,x)}rad)`}}}]
             }})))
-    // could be a nexttick probably    
+    // could be a nexttick    
     setTimeout(()=>
         Array.from(target.querySelectorAll("arm.tall"), (node, index) => {
             setTimeout(function(){

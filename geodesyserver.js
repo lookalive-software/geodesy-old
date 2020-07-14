@@ -1,31 +1,37 @@
 const http = require('http')
 const fs = require('fs')
+const zlib = require('zlib')
 const {elementary} = require('@lookalive/elementary')
-const static = ["node_modules","polygons"]
+const geodesy = require('./geodesy.js')
 
 http.createServer((req, res) => {
-    // stream static files
-    if(static.includes(req.url.split('/')[1])){
-        fs.createReadStream('.' + req.url.split('?').shift())
-          .on('error', err => { 
-              res.writeHead(500)
-              res.end(JSON.stringify(err)) 
-          })
-          .pipe(res)
-    // or render dynamic files
-    } else {
-        try {
-           let html = elementary(
-               JSON.parse(
-                   fs.readFileSync('.' + req.url).toString()
-               )
-           )
-           console.log(html)
-           res.end(html)
-        } catch(e){
-            res.writeHead(500)
-            res.end(JSON.stringify(e)) 
-        }
-        // res.end('<script src="/node_modules/algebrite/dist/algebrite.js"></script>')
+    try {
+        console.log(req.url)
+        let html = zlib.gzipSync(eval(fs.readFileSync('www' + req.url).toString()))
+        res.setHeader('Content-Type','text/html')
+        res.setHeader('Content-Encoding','gzip')
+        res.end(html)
+    } catch (e){
+        console.log(e)
+        res.writeHead(500)
+        res.end(JSON.stringify(e))
     }
 }).listen(3030)
+
+
+function htmlwrap(content){
+    return [
+        {"!DOCTYPE html":[]},
+        {"html":[
+            {"head": [
+                {"meta":{"charset":"UTF-8"}},
+                {"link":{
+                    "rel":"icon",
+                    "type":"image/x-icon",
+                    "href":"data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII="
+                }}
+            ]},
+            {"body": content}
+        ]}
+    ]
+}
