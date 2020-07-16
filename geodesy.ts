@@ -40,7 +40,9 @@ interface NormData {
     [index: string]: Tile[]
 }
 
-
+// bitmask could be space seperated to define multiple polygons for children
+// a 2 x 2 grid would have bitmasks 1 2 4 8 => 0001, 0010, 0100, 1000
+// shadow: x-offset y-offset blur color
 module.exports = function geodesy(element: GeodesyElement): any {
     // xSize:number, ySize:number, shape:Shape
     let {motif, bitmask, radius} = element.geodesy
@@ -50,7 +52,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
     
     let size = parseInt(bitmask, 16)
     let unitlength = parseInt(radius, 10)
-    // fetch motif descriptor
+    // fetch motif descriptor, clear cache so I'm always reading latest file
     delete require.cache[require.resolve('./motif/' + motif + '.json')];
     // let [shadowTop, shadowLeft, backgroundColor, shadowColor, blur] = require('./motif/' + motif + '.json')['meta']['themes'][0]
     let motifData = require('./motif/' + motif + '.json')['motif'] as Shape[]
@@ -59,15 +61,19 @@ module.exports = function geodesy(element: GeodesyElement): any {
 
     // for(var shape of motifData){
     motifData.forEach((shape, motifIndex) => {
-        let basispts = M(
+        let basispts = applyShift(applyScale(M(
             dot(
-                applyShift(
-                    table(size, size),
-                    shape.offset
-                ), // TODO use origin in this calc
+                table(size, size),
                 shape.basis
             )
-        )
+        ), shape.scale), shape.offset)
+
+        console.log({
+            polygon: motifIndex,
+            basispts
+        })
+
+
         basispts.forEach(([x,y], pointIndex) => {
             var thisnorm = calcNorm(x,y)
             var thisspin = calcSpin(x,y)
@@ -87,7 +93,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
             }
         })
     })
-
+    // console.log(normData)
     // // each key of normData is the norm for that set of spin/polygons
     // // each spin element carries 
     // for(var norm of Object.keys(normData)){
@@ -99,7 +105,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
                 "--radius": radius,
                 "--scale": "1"
             }},
-            {"geodesy, norm, spin, scale, polygon, target":{
+            {"geodesy, norm, spin, polygon, target":{
                 "display": "block",
                 "position": "absolute",
                 "height": "var(--radius)",
@@ -116,10 +122,11 @@ module.exports = function geodesy(element: GeodesyElement): any {
             }},
             {"polygon": {
                 "bottom": "0",
-                "background": "#aaa",
-                "filter":"blur(3px)",
                 // shadow blur goes here
                 // shadow color goes here
+                "background": "#aaa",
+                "filter":"blur(3px)",
+
             }},
             {"target":{
                 "pointer-events":"all",
@@ -128,10 +135,12 @@ module.exports = function geodesy(element: GeodesyElement): any {
                 // polygon color goes here
                 "left":"3px",
                 "top":"3px",
-                "background":"white"
+                "background":"white",
+                "transition":"scale 0.25s"
             }},
             {"target:hover": {
-                "background": "red"
+                "left":"6px",
+                "top":"6px"
             }},
             ...motifData.map((shape, shapeIndex) => ({
                 [`[polygon="${shapeIndex}"], [polygon="${shapeIndex}"] target`]: {
@@ -251,8 +260,19 @@ function applyShift(dimensions: string[][], shift: string[]): string[][]{
     // so I thought why not just add to x and y
     let dimensionsClone = dimensions.slice()
     for(var pt in dimensionsClone){
-        dimensionsClone[pt][0] = λ.run(`${dimensionsClone[pt][0]} + ${shift[0]}`)
-        dimensionsClone[pt][1] = λ.run(`${dimensionsClone[pt][1]} + ${shift[1]}`)
+        dimensionsClone[pt][0] = λ.run(`${dimensionsClone[pt][0]} + (${shift[0]})`) // had to wrap the shift in parans for it to accept negative offset
+        dimensionsClone[pt][1] = λ.run(`${dimensionsClone[pt][1]} + (${shift[1]})`)
+    }
+    return dimensionsClone
+}
+
+function applyScale(dimensions: string[][], scale: string): string[][]{
+    // I thought of doing this with dot product with a matrix transform but there's a bunch of adding and removing ones to make the shapes fit
+    // so I thought why not just add to x and y
+    let dimensionsClone = dimensions.slice()
+    for(var pt in dimensionsClone){
+        dimensionsClone[pt][0] = λ.run(`${dimensionsClone[pt][0]} * (${scale})`) // had to wrap the shift in parans for it to accept negative offset
+        dimensionsClone[pt][1] = λ.run(`${dimensionsClone[pt][1]} * (${scale})`)
     }
     return dimensionsClone
 }

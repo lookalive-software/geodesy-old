@@ -1,5 +1,9 @@
 {
+    "watch": true,
     "compilerOptions": {
         "target":"ES6"
-    }
+    },
+    "files":[
+        "geodesy.ts"
+    ]
 }
