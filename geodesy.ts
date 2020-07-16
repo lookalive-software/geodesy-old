@@ -6,7 +6,7 @@
  * Each element has attributes like: code-src, origin, length, bitmask... 
  * maybe it will return a list of <geodesy> elements, each with a src pointing to the pattern descriptor
  */
-
+const fs = require('fs')
 const λ = require('algebrite')
 
 interface Shape {
@@ -40,6 +40,16 @@ interface NormData {
     [index: string]: Tile[]
 }
 
+// tuples of form [norm, [tile, tile, tile]]
+type SortedNormData = [string, Tile[]][]
+
+
+// going to take w and h dimensions, calculate the diagonal,
+// and use that length for the range of norms to draw
+
+// need to save the data to a JSON file so I'm not recalculating all the time
+
+
 // bitmask could be space seperated to define multiple polygons for children
 // a 2 x 2 grid would have bitmasks 1 2 4 8 => 0001, 0010, 0100, 1000
 // shadow: x-offset y-offset blur color
@@ -58,6 +68,8 @@ module.exports = function geodesy(element: GeodesyElement): any {
     let motifData = require('./motif/' + motif + '.json')['motif'] as Shape[]
 
     let normData:NormData = {}
+    let sortedNormData:SortedNormData = []
+    
 
     // for(var shape of motifData){
     motifData.forEach((shape, motifIndex) => {
@@ -86,13 +98,25 @@ module.exports = function geodesy(element: GeodesyElement): any {
                 polygon: motifIndex
             }
         
+        // first I have to treat normData as a hashmap
+        // to sort spins into categories
             if(normData[thisnorm]){
                 normData[thisnorm].push(tile)
             } else {
                 normData[thisnorm] = [tile]
             }
         })
+        // 
+
+        sortedNormData = Object.entries(normData)
+        sortedNormData.sort((a,b) => {
+            return N(λ.run(`${a[0]} - ${b[0]}`))
+        })
+
     })
+
+    fs.writeFileSync(`cache/${motif}.json`, JSON.stringify(normData, null, 2))
+    fs.writeFileSync(`cache/sorted_${motif}.json`, JSON.stringify(sortedNormData, null, 2))
     // console.log(normData)
     // // each key of normData is the norm for that set of spin/polygons
     // // each spin element carries 
@@ -110,7 +134,7 @@ module.exports = function geodesy(element: GeodesyElement): any {
                 "position": "absolute",
                 "height": "var(--radius)",
                 "width": "var(--radius)",
-                "pointer-events": "none"
+                 "pointer-events": "none"
             }},
             {"geodesy":{
                 "top": `Calc(50vh - (var(--radius) / 2))`,
@@ -150,12 +174,12 @@ module.exports = function geodesy(element: GeodesyElement): any {
         )},
         {"geodesy": {
             motif, bitmask, radius,
-            "childNodes": Object.keys(normData).map(norm => ({
+            "childNodes": sortedNormData.map(([norm, spins]) => ({
                 "norm": {
                     "id": norm,
                     "style": {"height": `Calc(var(--radius) * ${N(norm)} + var(--radius))`},
-                    "neighbors": normData[norm].length,
-                    "childNodes": normData[norm].map(spin => ({
+                    "neighbors": spins.length,
+                    "childNodes": spins.map(spin => ({
                         "spin": {
                             "style": {"transform": `rotate(${spin.spin}rad)`},
                             "childNodes":[
@@ -184,10 +208,6 @@ module.exports = function geodesy(element: GeodesyElement): any {
     
     return Object.values(normData)
 }
-
-// motif.motif is a shape[]
-// for each shape I calculate the grid, apply the offset, calc the norms and spins
-
 
 /**
  * So to do the sorting there's an intermediate data structure,
