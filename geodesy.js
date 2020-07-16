@@ -32,7 +32,7 @@ module.exports = function geodesy(element) {
     var normData = {};
     // for(var shape of motifData){
     motifData.forEach(function (shape, motifIndex) {
-        var basispts = applyShift(applyScale(M(dot(table(size, size), shape.basis)), shape.scale), shape.offset);
+        var basispts = applyShift(M(dot(table(size, size), shape.basis)), shape.offset);
         console.log({
             polygon: motifIndex,
             basispts: basispts

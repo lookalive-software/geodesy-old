@@ -61,12 +61,12 @@ module.exports = function geodesy(element: GeodesyElement): any {
 
     // for(var shape of motifData){
     motifData.forEach((shape, motifIndex) => {
-        let basispts = applyShift(applyScale(M(
+        let basispts = applyShift(M(
             dot(
                 table(size, size),
                 shape.basis
             )
-        ), shape.scale), shape.offset)
+        ), shape.offset)
 
         console.log({
             polygon: motifIndex,
