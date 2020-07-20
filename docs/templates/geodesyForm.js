@@ -10,7 +10,7 @@ function geodesyForm(id){
     {"section group='3'":[
         {"section":[
             {"label for='zoom'":["zoom"]},
-            {"input for='zoom'": {"type":"range", "min":"0","max":"3","step":"0.01" }},
+            {"input for='zoom'": {"type":"range", "min":".1","max":"3","step":"0.01" }},
         ]},
         {"section":[
             {"label for='xoffset'":["x offset"]},
@@ -22,8 +22,17 @@ function geodesyForm(id){
         ]}
     ]},
     {"section":[
+        {"label for='cast-shadow'":["cast shadow?"]},
+        {"input for='cast-shadow'": {"type":"checkbox","checked":"true"}}
+    ]},
+    {"section":[
         {"label for='size'":["size"]},
-        {"input for='size'": {"type":"number", "min":"0","max":"50","step":"1" }}
+        {"input for='size' value='15'": {"type":"number", "min":"0","max":"50","step":"1" }}
+    ]},
+    {"section":[
+        {"input for='i'": {"type":"number", "min":"0","max":"50","step":"1","placeholder":"0" }},
+        {"label for='i'":["n + "]},
+        {"input for='j'": {"type":"number", "min":"0","max":"50","step":"1","placeholder":"0"}}
     ]},
     {"section":[
         {"label for='motif'":["motif"]},
@@ -31,7 +40,7 @@ function geodesyForm(id){
             {"option": {"value": "none", "childNodes": ["none"]}},
             {"option": {"value": "square", "childNodes": ["square"]}},
             {"option": {"value": "pyritohedron", "childNodes": ["pyritohedron"]}},
-            {"option": {"value": "p4octagon", "childNodes": ["p4octagon"]}},
+            {"option": {"selected":"", "value": "p4octagon", "childNodes": ["p4octagon"]}},
             {"option": {"value": "honeycomb", "childNodes": ["honeycomb"]}},
         ]}
     ]}

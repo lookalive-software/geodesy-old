@@ -28,20 +28,26 @@ function motifStyle(id, motifData){
         [`#${id} polygon`]: {
             "bottom": "0",
             "transition":"all 1s",
+        },
+        [`#${id}[cast-shadow="true"] polygon`]: {
             // shadow blur goes here
             // shadow color goes here
             "background": "#aaa",
             "filter":"blur(3px)",
         },
-        [`#${id} target`]:{
-            "pointer-events":"all",
-            // "clip-path": "inherit"
+        [`#${id}[cast-shadow="true"] target`]:{
             // shadow offset goes here
             // polygon color goes here
             "left":"3px",
             "top":"3px",
             "background":"white",
-            "transition":"scale 0.25s"
+        },
+        [`#${id} target`]:{
+            // "background":"white",
+            "left":"0",
+            "top":"0",
+            "pointer-events":"all",
+            // "transition":"all 0.25s"
         },
         [`#${id} target:hover`]: {
             "left":"6px",

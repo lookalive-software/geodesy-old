@@ -48,7 +48,7 @@ function geodesyFormStyle(){
         "box-shadow": "5px 5px 10px black"
     },
     "input, select":{
-        "width":"50%"
+        "max-width":"30%"
     }
 }}}
 
