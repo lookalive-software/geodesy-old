@@ -102,9 +102,6 @@ http.createServer((req, res) => {
     }
 }).listen(3030);
 
-
-
-
 Object.defineProperty(Error.prototype, 'toJSON', {
     value: function () {
         // well, I'm mutating string into an array of strings, not sure the type signature of that

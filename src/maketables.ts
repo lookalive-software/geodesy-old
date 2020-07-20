@@ -28,7 +28,7 @@ import * as λ from './mathutils'
 // create cache whether or not it exists
 fs.mkdirSync('./cache', {recursive: true})
 
-const tableSize:{x:number, y:number} = {x: 2, y: 2}
+const tableSize:{x:number, y:number} = {x: 10, y: 10}
 
 
 // for each file in the motif directory...
@@ -78,7 +78,10 @@ fs.readdirSync('./motif').map(filename => {
 
     fs.writeFileSync("./cache/" + name + ".json", JSON.stringify({
         meta: metaData,
-        motif: motifData.map(polygonData => Object.assign(polygonData, {polygon: λ.polygon2clippath(polygonData.polygon)} )),
+        motif: motifData.map(polygonData => Object.assign(polygonData, {
+            polygon: λ.polygon2clippath(polygonData.polygon),
+            scale:  λ.N(polygonData.scale)
+        })),
         norms: sortedNormData
     }, null, 2));
 })

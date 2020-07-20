@@ -1,4 +1,34 @@
+/*
+This provides a getter / setter / emitter API for modifying HTML attributes
+To replace element.setAttribute('name','nobody') with element.props.name = 'nobody'
+And proviede a hook into being notified of attributes that are changed with this API
+element.onAttributeChanged = function()
+*/
+
+// you have to pass the HTMLElement context to the function, 
+function updateAttribute(prop, newValue){
+    let attributeChange = {attribute: prop, oldValue: this.getAttribute(prop)}
+
+    if(typeof newValue == "undefined"){
+        this.removeAttribute(prop)
+    } else if(typeof newValue == "object"){
+        this.setAttribute(prop, JSON.stringify(newValue))
+    } else {
+        this.setAttribute(prop, newValue)
+    }
+
+    return Object.assign(attributeChange, {newValue: this.getAttribute(prop)})
+}
+
 Object.defineProperties(HTMLElement.prototype, {
+    // following old style of attaching event listeners, set a function to element.onAttributeChanged = ({attribute, oldValue, newValue}) => {} 
+    onAttributeChanged: {
+        set: function(data){
+            // incoming data is expecting to be a function
+            if(typeof data != 'function') throw new Error("onAttributeChanged can only be set to a callback")
+            this.attributeChangedCallback = data
+        }
+    },
     props: {
         get(){
             let props = Array.from(this.attributes, attr => ({
@@ -7,18 +37,23 @@ Object.defineProperties(HTMLElement.prototype, {
             
             return new Proxy(props, {
                 set: (obj, prop, value) => {
-                    value ? this.setAttribute(prop, value) : this.removeAttribute(prop)
+                    let update = updateAttribute.call(this, prop, value)
+                    if(typeof this.attributeChangedCallback == 'function'){
+                        this.attributeChangedCallback(update)
+                    }
                     return true
                 },
                 get: (target, name) => {
-                    return this.getAttribute(name.toLowerCase())
+                    return this.getAttribute(name)
                 }
             })
         },
         set(data){
             Object.keys(data || {}).forEach(key => {
-                // handle depth-1 nested objects, if a prop is an object, stringify it, I can parse it when I see it change like all the rest in attributeChangedCallback
-                this.setAttribute(key, typeof data[key] == 'object' ? JSON.stringify(data[key]) : data[key])
+                let update = updateAttribute.call(this, key, data[key])
+                if(typeof this.attributeChangedCallback == 'function'){
+                    this.attributeChangedCallback(update)
+                }
             })
         }
     },

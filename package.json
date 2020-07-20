@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node dist/server",
+    "build": "node dist/maketables",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

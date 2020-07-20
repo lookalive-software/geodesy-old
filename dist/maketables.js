@@ -25,7 +25,7 @@ var path = require("path");
 var λ = require("./mathutils");
 // create cache whether or not it exists
 fs.mkdirSync('./cache', { recursive: true });
-var tableSize = { x: 2, y: 2 };
+var tableSize = { x: 10, y: 10 };
 // for each file in the motif directory...
 fs.readdirSync('./motif').map(function (filename) {
     var name = path.parse(filename).name;
@@ -65,7 +65,10 @@ fs.readdirSync('./motif').map(function (filename) {
     });
     fs.writeFileSync("./cache/" + name + ".json", JSON.stringify({
         meta: metaData,
-        motif: motifData.map(function (polygonData) { return Object.assign(polygonData, { polygon: λ.polygon2clippath(polygonData.polygon) }); }),
+        motif: motifData.map(function (polygonData) { return Object.assign(polygonData, {
+            polygon: λ.polygon2clippath(polygonData.polygon),
+            scale: λ.N(polygonData.scale)
+        }); }),
         norms: sortedNormData
     }, null, 2));
 });

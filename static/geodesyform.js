@@ -5,37 +5,51 @@
 // according to motif name selection
 // make a request to grab the motif data
 
-
-var motifSelection = 'honeycomb'
+/**
+ * a dropdown menu 
+ * 
+ */
 
 // keep a reference to style tag and geodesy tag so if the dropdown changes I can remove them .remove()
 // kvetch.get(`/cache/${motifSelection}/polygons`).then(res => {
 //     // attach style to document
 // })
 
+// going to look for forms, and attach listeners to all their inputs
+// for each form, queryselector input, select, textarea and for each of those, addeventlistener input (any changes) or change (committed changes)
+// 
+
 // when motif selection changes, I have to destroy the geodesy element with the old motif, and create it from scratch
 function geodesyCreate(element){
     // kvetch the motif information
-    kvetch.get(`/cache/${motifSelection}/motif`).then(motifData => {
+    kvetch.get(`/cache/${element.props.motif}/motif`).then(motifData => {
+        document.body.innerHTML += elementary(interpolateStyleTag(motifData))
         // attach style to document
         // need to get an array of clip path polygons, and an array of scales.
-        element.appendChild(elementary(interpolateStyleTag(motifData)))
+        // element.appendChild(elementary(interpolateStyleTag(motifData)))
     })
     // attach the style tag, call resize and it will start kvetching position data and creating the norms...
     // call geodesy resize, it will graph the motif name off the element and decide what to do with the length attributes
 }
 
+function registerGeodesy(element){
+
+}
+
 function geodesyResize(element){
     // 
     if(element.children.length < element.props.length){
+        console.log(`/cache/${element.props.motif}/norms/${element.children.length}`)
         // get data for
          // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
-        kvetch.get(`/cache/${element.props.motif}/${element.children}`)
+        kvetch.get(`/cache/${element.props.motif}/norms/${element.children.length}`)
               .then(normData => {
                     // call elementary with this polygondata [name, number, polygondData[]]
                     // map over the polygonData to interpolate the spin values into markup
                     // attach the norm and spin markup to the geodesy element. 
-                    element.appendChild(interpolateNormData(normData))
+                    console.log(normData)
+                    element.innerHTML += elementary(interpolateNormData(normData))
+                    setTimeout(function(){ geodesyResize(element) }, 250)
               })
               .catch(error => {
                   console.log("failed to fetch norm index", error)
@@ -45,6 +59,7 @@ function geodesyResize(element){
         // then delete child.
         // could set some attribute to hide it / apply animation, delete it 50 ms later... 
         element.lastChild.remove()
+        setTimeout(function(){ geodesyResize(element) }, 250)
     }
     // if its not greater than, and not less than, then no need to do any work
 
@@ -78,6 +93,18 @@ function geodesyDisintegrate(element){
 //     })
 // }
 
+/**
+ * Now when I create a geodesy element, I can attach the functions to it with a simple attribute changed
+ * element.onAttributeChanged = ({attribute, newValue}) => {
+ *  switch(attribute){
+ *      case 'length': geodesyResize()
+ *      case 'motif': if newValue!=oldValue, disintegrate (delete from inside out, but for the style), then createNew.... 
+ *      case 'bitmask'
+ *      case 'radius'
+ *  }
+ * }
+ */
+
 function interpolateNormData([symbolicNorm, numericNorm, spinData]){
     return {"norm": {
         "id": symbolicNorm,
@@ -89,8 +116,13 @@ function interpolateNormData([symbolicNorm, numericNorm, spinData]){
                 "childNodes":[
                     {"polygon":{
                         "polygon": `${spin.polygon}`,
-                        "style": {"transform": `scale(Calc(var(--globalscale) * var(--localscale))) rotate(Calc(-1 * ${spin.spin}rad))`},
-                        "childNodes":[{"target": {}}]
+                        "style": {"transform": 
+                            `scale(Calc(var(--globalscale) * var(--localscale))) ` +
+                            `rotateX(var(--twist)) ` +
+                            `rotate(Calc(-1 * ${spin.spin}rad))`},
+                        "childNodes":[{"target": {
+                            // "style": {"transform": `rotate(${spin.spin}rad)`}
+                        }}]
                     }}
                 ]
             }
@@ -141,7 +173,7 @@ function interpolateStyleTag(motifData){
         }}, // close style object, next argument for Object.assign is an array of polygon selectors
         ...motifData.map((shape, shapeIndex) => ({
             [`[polygon="${shapeIndex}"], [polygon="${shapeIndex}"] target`]: {
-                "clip-path": `polygon(${shape.polygon})`,
+                "clip-path": shape.polygon,
                 "--localscale": shape.scale
             }
         }))
