@@ -14,7 +14,7 @@ function updateAttribute(prop, newValue){
     } else if(typeof newValue == "object"){
         this.setAttribute(prop, JSON.stringify(newValue))
     } else {
-        this.setAttribute(prop, newValue)
+        this.setAttribute(prop, String(newValue))
     }
 
     return Object.assign(attributeChange, {newValue: this.getAttribute(prop)})
@@ -23,7 +23,10 @@ function updateAttribute(prop, newValue){
 Object.defineProperties(HTMLElement.prototype, {
     // following old style of attaching event listeners, set a function to element.onAttributeChanged = ({attribute, oldValue, newValue}) => {} 
     onAttributeChanged: {
-        set: function(data){
+        get(){
+            return this.attributeChangedCallback
+        },
+        set(data){
             // incoming data is expecting to be a function
             if(typeof data != 'function') throw new Error("onAttributeChanged can only be set to a callback")
             this.attributeChangedCallback = data

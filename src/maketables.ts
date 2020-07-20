@@ -55,6 +55,7 @@ fs.readdirSync('./motif').map(filename => {
             let thisspin = λ.calcSpin(x,y)
         
             let polygonData:PolygonData = {
+                "x":x, "y":y,
                 "spin": thisspin,
                 polygon: motifIndex
             }
@@ -79,7 +80,7 @@ fs.readdirSync('./motif').map(filename => {
     fs.writeFileSync("./cache/" + name + ".json", JSON.stringify({
         meta: metaData,
         motif: motifData.map(polygonData => Object.assign(polygonData, {
-            polygon: λ.polygon2clippath(polygonData.polygon),
+            clippath: λ.polygon2clippath(polygonData.polygon),
             scale:  λ.N(polygonData.scale)
         })),
         norms: sortedNormData

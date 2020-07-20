@@ -17,17 +17,58 @@
 
 // going to look for forms, and attach listeners to all their inputs
 // for each form, queryselector input, select, textarea and for each of those, addeventlistener input (any changes) or change (committed changes)
-// 
+
+
+// document.addEventListener('')
+Array.from(document.querySelectorAll('form'),function(formElemenet){
+    console.log(formElemenet.props.target)
+    Array.from(formElemenet.querySelectorAll('input, select'), function(inputElement){
+        // find target and set values according to target props to initialize
+        // size, motif, zoom, pos-x, pos-y
+        console.log(inputElement)
+        // inputElement.props.oninput = ".submit()"
+        inputElement.addEventListener('input',function(event){
+
+            targetElement = formElemenet.props.target
+            targetAttribute = event.target.props.for
+            targetValue = event.target.value
+            document.getElementById(targetElement).props[targetAttribute] = targetValue
+        })
+    })
+})
+// wooowwww when nyou use document.body.innerHTML += it recreates the document, erasing all your event liseners :O
+
+geodesy.onAttributeChanged = function({attribute, oldValue, newValue}){
+    console.log({attribute, newValue})
+    // console.log({"this":this})
+    switch(attribute){
+        case 'xoffset':
+        case 'yoffset':
+        case 'zoom':
+            this.style.transform = `scale(${this.props.zoom || 1}) translateX(${this.props.xoffset || 0}vw) translateY(Calc(-1 * (${this.props.yoffset || 0}vh))`
+            break
+        case 'size':
+            geodesyResize(this)
+            break;
+    }
+}
+// set props to self once geodesyresize is attached
+
+// setTimeout(function(){geodesyResize(geodesy)},1000)
 
 // when motif selection changes, I have to destroy the geodesy element with the old motif, and create it from scratch
-function geodesyCreate(element){
+function geodesyCreate(){
+    // keep a reference to the style sheet
+
     // kvetch the motif information
-    kvetch.get(`/cache/${element.props.motif}/motif`).then(motifData => {
-        document.body.innerHTML += elementary(interpolateStyleTag(motifData))
+    // kvetch.get(`/cache/${geodesy.props.motif}/motif`).then(motifData => {
+        var temp = document.createElement('template')
+        temp.innerHTML += elementary(interpolateStyleTag(window.cache[geodesy.props.motif].motif))
+        document.body.appendChild(temp.content)
+        // document.body.appendChild(temp.content/)
         // attach style to document
         // need to get an array of clip path polygons, and an array of scales.
         // element.appendChild(elementary(interpolateStyleTag(motifData)))
-    })
     // attach the style tag, call resize and it will start kvetching position data and creating the norms...
     // call geodesy resize, it will graph the motif name off the element and decide what to do with the length attributes
 }
@@ -36,30 +77,60 @@ function registerGeodesy(element){
 
 }
 
+function keypath(object, keypath){
+    keypath = keypath.filter(Boolean)
+    while(keypath.length && object){
+        object = object[keypath.shift()]
+    }
+    return object
+}
+
+window.cache = {}
+Promise.all([
+    kvetch.get(`/cache/square`).then(res => {
+        console.log(res)
+        window.cache.square = res
+    }),
+    kvetch.get(`/cache/pyritohedron`).then(res => {
+        window.cache.pyritohedron = res
+    }),
+    kvetch.get(`/cache/honeycomb`).then(res => {
+        window.cache.honeycomb = res
+    }),
+    kvetch.get(`/cache/p4octagon`).then(res => {
+        window.cache.p4octagon = res
+    })
+]).then(promises=>{
+    console.log(promises)
+    geodesyCreate() // maybe once motif is changed?
+    geodesyResize(geodesy) // maybe once motif is changed?    
+})
+
 function geodesyResize(element){
     // 
-    if(element.children.length < element.props.length){
-        console.log(`/cache/${element.props.motif}/norms/${element.children.length}`)
+    if(element.children.length < element.props.size){
+        // console.log(`/cache/${element.props.motif}/norms/${element.children.length}`)
         // get data for
          // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
-        kvetch.get(`/cache/${element.props.motif}/norms/${element.children.length}`)
-              .then(normData => {
+
                     // call elementary with this polygondata [name, number, polygondData[]]
                     // map over the polygonData to interpolate the spin values into markup
                     // attach the norm and spin markup to the geodesy element. 
-                    console.log(normData)
-                    element.innerHTML += elementary(interpolateNormData(normData))
-                    setTimeout(function(){ geodesyResize(element) }, 250)
-              })
-              .catch(error => {
-                  console.log("failed to fetch norm index", error)
-              })
+        let normData = window.cache[element.props.motif].norms[element.children.length]
+        console.log(normData)
+
+        var temp = document.createElement('template')
+        temp.innerHTML += elementary(interpolateNormData(normData))
+        element.appendChild(temp.content)
+
+        setTimeout(function(){ geodesyResize(element) }, 50)
+
     }
-    if(element.children.length > element.props.length ){
+    if(element.children.length > element.props.size ){
         // then delete child.
         // could set some attribute to hide it / apply animation, delete it 50 ms later... 
         element.lastChild.remove()
-        setTimeout(function(){ geodesyResize(element) }, 250)
+        setTimeout(function(){ geodesyResize(element) }, 50)
     }
     // if its not greater than, and not less than, then no need to do any work
 
@@ -103,7 +174,7 @@ function geodesyDisintegrate(element){
  *      case 'radius'
  *  }
  * }
- */
+ */     
 
 function interpolateNormData([symbolicNorm, numericNorm, spinData]){
     return {"norm": {
@@ -178,7 +249,6 @@ function interpolateStyleTag(motifData){
             }
         }))
     )}
-
 }
 
 
@@ -212,3 +282,5 @@ function interpolateStyleTag(motifData){
 //             }))
 //         }}
 // }
+
+

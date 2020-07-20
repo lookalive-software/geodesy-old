@@ -1,5 +1,3 @@
-import { runInContext } from "vm"
-
 const λ = require('algebrite')
 
 /**

@@ -20,8 +20,8 @@ interface Motif {
 
 
 interface PolygonData {
-    // x: string,
-    // y: string,
+    x: string,
+    y: string,
     // norm: string, // already represented on the parentNode /* I don't want to throw away the math of norm, but I'll need to convert it to number for sorting */
     spin: number, /* for spin I'm using Math.atan2 because it figures out +/- for me, and it returns a javascript number */
     polygon: number, /* just 0 1 or 2... the index of the original motif list. */
