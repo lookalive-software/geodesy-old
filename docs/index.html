@@ -52,7 +52,7 @@
                     {"geodesy":{
                         "id": UUID,
                         "motif": motifName,
-                        "size": "5"
+                        "size": "20"
                     }}
                 ))
                 
@@ -74,18 +74,28 @@
                 // call elementary with this polygondata [name, number, polygondData[]]
                 // map over the polygonData to interpolate the spin values into markup
                 // attach the norm and spin markup to the geodesy element. 
-                    let nextNorm = window.cache[element.props.motif].norms[element.children.length - 1]
+                    let normIndex = element.children.length - 1
+                    let nextNorm = window.cache[element.props.motif].norms[normIndex]
                     // console.log(nextNorm)
                     // console.log(elementary(normData(nextNorm)))
 
-                    element.appendChild(createElementary(normData(nextNorm)))
-                    setTimeout(function(){ resizeGeodesy(element) }, 50)
+                    element.appendChild(createElementary(normData(normIndex, nextNorm)))
+                    // after a timeout, I can toggle 
+                    // 
+                    setTimeout(function(){
+                        element.lastChild.classList.toggle('visibility') 
+                        resizeGeodesy(element) 
+                    }, 50)
                 }
                 if(element.children.length - 1 > element.props.size ){
                     // then delete child.
                     // could set some attribute to hide it / apply animation, delete it 50 ms later... 
-                    element.lastChild.remove()
-                    setTimeout(function(){ resizeGeodesy(element) }, 50)
+                    element.lastChild.classList.toggle('visibility') 
+                    
+                    setTimeout(function(){
+                        element.lastChild.remove()
+                        resizeGeodesy(element) 
+                    }, 50)
                 }
             }
 

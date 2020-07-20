@@ -1,6 +1,6 @@
-function normData([symbolicNorm, numericNorm, spinData]){
+function normData(id, [symbolicNorm, numericNorm, spinData]){
     return {"norm": {
-        "id": symbolicNorm,
+        "id": id,
         "style": {"height": `Calc(var(--radius) * ${numericNorm} + var(--radius))`},
         "neighbors": spinData.length,
         "childNodes": spinData.map(spin => ({

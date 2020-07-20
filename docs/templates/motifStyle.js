@@ -4,9 +4,15 @@ function motifStyle(id, motifData){
         [`#${id}`]:{
             "--radius": "100px",
             "--globalscale": "1",
-            "--twist": "0",
+            "--twist": ".25turn",
             "top": `Calc(50vh - (var(--radius) / 2))`,
             "left": `Calc(50vw - (var(--radius) / 2))`
+        },
+        [`#${id} norm`]:{
+            "transition":"all .25s"
+        },
+        [`#${id} norm.visibility`]:{
+            "--twist": "0"
         },
         [`#${id}, #${id} norm, #${id} spin, #${id} polygon, #${id} target`]:{
             "display": "block",
