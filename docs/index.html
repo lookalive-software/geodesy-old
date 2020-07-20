@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <!-- blank favicon to supress extra request-->
+        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=">
+        <script src="js/elementary.js"></script>
+        <script src="js/kvetch.js"></script>
+        <script src="js/htmlprops.js"></script>
+        <script src="js/formbinder.js"></script>
+    
+        <!-- <script src="js/geodesyform.js" defer="true"></script> -->
+        <!-- <script src="js/outTurf.js" defer="true"></script> -->
+
+        <script src="templates/geodesyForm.js"></script>
+        <script src="templates/geodesyFormStyle.js"></script>
+        <script src="templates/motifStyle.js"></script>
+        <script src="templates/normData.js"></script>
+    </head>
+    <body>
+        <script>
+            document.body.innerElement = elementary(geodesyFormStyle())
+            document.body.innerElement = elementary(geodesyForm('hello'))
+            formbinder()
+
+            window.cache = {}
+            Promise.all([
+                kvetch.get(`cache/square.json`).then(res => window.cache.square = res),
+                kvetch.get(`cache/pyritohedron.json`).then(res => window.cache.pyritohedron = res),
+                kvetch.get(`cache/honeycomb.json`).then(res => window.cache.honeycomb = res),
+                kvetch.get(`cache/p4octagon.json`).then(res => window.cache.p4octagon = res)
+            ]).then(()=>{
+                let newGeodesy = registerGeodesy('honeycomb')
+
+                setTimeout(()=>resizeGeodesy(newGeodesy), 100)
+                // add the form to the page
+                // click the start button that creates a styletag and a geodesy form
+
+                // the stylesheet rules are prefixed to only apply to one...
+
+                // geodesyCreate() // maybe once motif is changed?
+                // geodesyResize(geodesy) // maybe once motif is changed?    
+            })
+
+            
+
+            function registerGeodesy(motifName){
+                let UUID = 'x' + Math.round(Math.random() * Math.pow(2,24)).toString(16)
+                // take default values
+                console.log("UUID", UUID)
+                // document.body.innerElement = elementary(motifStyle(window.cache[motifName].motif))
+                document.body.appendChild(createElementary(
+                    {"geodesy":{
+                        "id": UUID,
+                        "motif": motifName,
+                        "size": "5"
+                    }}
+                ))
+                
+                let uniqueGeodesy = document.getElementById(UUID)
+
+                // setTimeout(()=>{
+                    uniqueGeodesy.appendChild(createElementary(
+                        motifStyle(UUID, window.cache[motifName].motif)
+                    ))
+                // }, 100)
+
+                return uniqueGeodesy
+            }
+
+            function resizeGeodesy(element){
+                if(element.children.length - 1 < element.props.size){ // implicit conversion from string to number for comparison
+                // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
+
+                // call elementary with this polygondata [name, number, polygondData[]]
+                // map over the polygonData to interpolate the spin values into markup
+                // attach the norm and spin markup to the geodesy element. 
+                    let nextNorm = window.cache[element.props.motif].norms[element.children.length - 1]
+                    // console.log(nextNorm)
+                    // console.log(elementary(normData(nextNorm)))
+
+                    element.appendChild(createElementary(normData(nextNorm)))
+                    setTimeout(function(){ resizeGeodesy(element) }, 50)
+                }
+                if(element.children.length - 1 > element.props.size ){
+                    // then delete child.
+                    // could set some attribute to hide it / apply animation, delete it 50 ms later... 
+                    element.lastChild.remove()
+                    setTimeout(function(){ resizeGeodesy(element) }, 50)
+                }
+            }
+
+            // for the attribute change listeners on each geodesy element...
+            // registergeodesy will take a newly created geodesy element, and attach attributechanged callbacks
+            // some of those callbacks are going to need the style tag controlling the geodesy tag.
+            // so create the style tag, create the geodesy, set a reference to styleTag on geodesy...
+            // so geodesy can read its own styletag.
+
+        </script>
+    </body>
+</html>
+

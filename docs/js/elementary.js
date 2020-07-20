@@ -9,6 +9,24 @@
      * An array is recursed over, an object is made into an HTMLElement or an HTMLStyleELement
      * Null is turned into a blank string, bool, numbers and strings are returned as strings.
      */
+    window.createElementary = function(elementaryDOM){
+        var template = document.createElement('template')
+        template.innerHTML = elementary(elementaryDOM)
+        return template.content
+    }
+
+    Object.defineProperty(HTMLElement.prototype, 'innerElement', {
+        get(){
+            return this.innerHTML
+            // later... convert HTML back into elementaryDOM just reading props and iterating over childNodes
+        },
+        set(htmlstring){
+            var template = document.createElement('template')
+            template.innerHTML = htmlstring
+            this.appendChild(template.content)
+        }
+    })
+
     function elementary(el) {
         if (el instanceof Array) {
             return el.map(elementary).join('');

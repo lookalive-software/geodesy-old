@@ -20,22 +20,7 @@
 
 
 // document.addEventListener('')
-Array.from(document.querySelectorAll('form'),function(formElemenet){
-    console.log(formElemenet.props.target)
-    Array.from(formElemenet.querySelectorAll('input, select'), function(inputElement){
-        // find target and set values according to target props to initialize
-        // size, motif, zoom, pos-x, pos-y
-        console.log(inputElement)
-        // inputElement.props.oninput = ".submit()"
-        inputElement.addEventListener('input',function(event){
 
-            targetElement = formElemenet.props.target
-            targetAttribute = event.target.props.for
-            targetValue = event.target.value
-            document.getElementById(targetElement).props[targetAttribute] = targetValue
-        })
-    })
-})
 // wooowwww when nyou use document.body.innerHTML += it recreates the document, erasing all your event liseners :O
 
 geodesy.onAttributeChanged = function({attribute, oldValue, newValue}){
@@ -85,26 +70,7 @@ function keypath(object, keypath){
     return object
 }
 
-window.cache = {}
-Promise.all([
-    kvetch.get(`/cache/square`).then(res => {
-        console.log(res)
-        window.cache.square = res
-    }),
-    kvetch.get(`/cache/pyritohedron`).then(res => {
-        window.cache.pyritohedron = res
-    }),
-    kvetch.get(`/cache/honeycomb`).then(res => {
-        window.cache.honeycomb = res
-    }),
-    kvetch.get(`/cache/p4octagon`).then(res => {
-        window.cache.p4octagon = res
-    })
-]).then(promises=>{
-    console.log(promises)
-    geodesyCreate() // maybe once motif is changed?
-    geodesyResize(geodesy) // maybe once motif is changed?    
-})
+
 
 function geodesyResize(element){
     // 
@@ -176,80 +142,6 @@ function geodesyDisintegrate(element){
  * }
  */     
 
-function interpolateNormData([symbolicNorm, numericNorm, spinData]){
-    return {"norm": {
-        "id": symbolicNorm,
-        "style": {"height": `Calc(var(--radius) * ${numericNorm} + var(--radius))`},
-        "neighbors": spinData.length,
-        "childNodes": spinData.map(spin => ({
-            "spin": {
-                "style": {"transform": `rotate(${spin.spin}rad)`},
-                "childNodes":[
-                    {"polygon":{
-                        "polygon": `${spin.polygon}`,
-                        "style": {"transform": 
-                            `scale(Calc(var(--globalscale) * var(--localscale))) ` +
-                            `rotateX(var(--twist)) ` +
-                            `rotate(Calc(-1 * ${spin.spin}rad))`},
-                        "childNodes":[{"target": {
-                            // "style": {"transform": `rotate(${spin.spin}rad)`}
-                        }}]
-                    }}
-                ]
-            }
-        }))
-    }}
-}
-
-
-function interpolateStyleTag(motifData){
-    return {"style": Object.assign({
-
-        "geodesy, norm, spin, polygon, target":{
-            "display": "block",
-            "position": "absolute",
-            "height": "var(--radius)",
-            "width": "var(--radius)",
-             "pointer-events": "none"
-        },
-        "geodesy":{
-            "top": `Calc(50vh - (var(--radius) / 2))`,
-            "left": `Calc(50vw - (var(--radius) / 2))`
-        },
-        "spin":{
-            "transform-origin": `Calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
-            "height":"inherit"
-        },
-        "polygon": {
-            "bottom": "0",
-            // shadow blur goes here
-            // shadow color goes here
-            "background": "#aaa",
-            "filter":"blur(3px)",
-
-        },
-        "target":{
-            "pointer-events":"all",
-            // "clip-path": "inherit"
-            // shadow offset goes here
-            // polygon color goes here
-            "left":"3px",
-            "top":"3px",
-            "background":"white",
-            "transition":"scale 0.25s"
-        },
-        "target:hover": {
-            "left":"6px",
-            "top":"6px"
-        }}, // close style object, next argument for Object.assign is an array of polygon selectors
-        ...motifData.map((shape, shapeIndex) => ({
-            [`[polygon="${shapeIndex}"], [polygon="${shapeIndex}"] target`]: {
-                "clip-path": shape.polygon,
-                "--localscale": shape.scale
-            }
-        }))
-    )}
-}
 
 
 
