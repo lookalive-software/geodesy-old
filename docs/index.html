@@ -19,8 +19,7 @@
     <body>
         <script>
             document.body.innerElement = elementary(geodesyFormStyle())
-            document.body.innerElement = elementary(geodesyForm('hello'))
-            formbinder()
+
 
             window.cache = {}
             Promise.all([
@@ -29,9 +28,12 @@
                 kvetch.get(`cache/honeycomb.json`).then(res => window.cache.honeycomb = res),
                 kvetch.get(`cache/p4octagon.json`).then(res => window.cache.p4octagon = res)
             ]).then(()=>{
-                let newGeodesy = registerGeodesy('honeycomb')
+                let newGeodesy = registerGeodesy('pyritohedron')
 
-                setTimeout(()=>resizeGeodesy(newGeodesy), 100)
+                setTimeout(()=>resizeGeodesy(newGeodesy), 10)
+
+                
+
                 // add the form to the page
                 // click the start button that creates a styletag and a geodesy form
 
@@ -57,6 +59,25 @@
                 ))
                 
                 let uniqueGeodesy = document.getElementById(UUID)
+                document.body.innerElement = elementary(geodesyForm(UUID))
+                formbinder()
+
+                uniqueGeodesy.onAttributeChanged = function({attribute, oldValue, newValue}){
+                    console.log({attribute, newValue})
+                    // console.log({"this":this})
+                    switch(attribute){
+                        case 'xoffset':
+                        case 'yoffset':
+                        case 'zoom':
+                            // 
+                            // this.querySelector('style').sheet.rule
+                            this.style.transform = `scale(${this.props.zoom || 1}) translateX(${this.props.xoffset || 0}vw) translateY(Calc(-1 * (${this.props.yoffset || 0}vh))`
+                            break
+                        case 'size':
+                            resizeGeodesy(this)
+                            break;
+                    }
+                }
 
                 // setTimeout(()=>{
                     uniqueGeodesy.appendChild(createElementary(
@@ -67,19 +88,39 @@
                 return uniqueGeodesy
             }
 
+            function destroyGeodesy(element){
+                    // then delete child.
+                    // could set some attribute to hide it / apply animation, delete it 50 ms later... 
+                    Array.from(element.querySelectorAll('norm.visibility'), (norm, index) => {
+                        setTimeout(()=>norm.classList.toggle('visibility'), 50 * index)
+                    })
+                    // destroy tag...
+                    // destroy form associated with it too...
+                    document.querySelector(`form[target="${element.props.id}"]`).remove()
+            }
+
             function resizeGeodesy(element){
-                if(element.children.length - 1 < element.props.size){ // implicit conversion from string to number for comparison
+                let visible = element.querySelectorAll('norm.visibility')
+                if(visible.length < element.props.size){ // implicit conversion from string to number for comparison
                 // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
 
                 // call elementary with this polygondata [name, number, polygondData[]]
                 // map over the polygonData to interpolate the spin values into markup
                 // attach the norm and spin markup to the geodesy element. 
-                    let normIndex = element.children.length - 1
-                    let nextNorm = window.cache[element.props.motif].norms[normIndex]
-                    // console.log(nextNorm)
-                    // console.log(elementary(normData(nextNorm)))
+                    let normIndex = visible.length
+                    let availableNorms = element.querySelectorAll('norm')
+                    // if norm hasn't been deleted yet, cancel its timeout and keep using it...
+                    if(availableNorms[normIndex]){
+                        availableNorms[normIndex].classList.toggle('visibility') 
+                        // cancel removal...
+                        clearTimeout(parseInt(availableNorms[normIndex].props.timeout))
+                    } else {
+                        // otherwise fetch data and create new set of norms
+                        let nextNorm = window.cache[element.props.motif].norms[normIndex]
+                        element.appendChild(createElementary(normData(normIndex, nextNorm)))
 
-                    element.appendChild(createElementary(normData(normIndex, nextNorm)))
+                    }
+
                     // after a timeout, I can toggle 
                     // 
                     setTimeout(function(){
@@ -87,15 +128,16 @@
                         resizeGeodesy(element) 
                     }, 50)
                 }
-                if(element.children.length - 1 > element.props.size ){
+                if(visible.length > element.props.size ){
                     // then delete child.
                     // could set some attribute to hide it / apply animation, delete it 50 ms later... 
-                    element.lastChild.classList.toggle('visibility') 
                     
-                    setTimeout(function(){
-                        element.lastChild.remove()
-                        resizeGeodesy(element) 
-                    }, 50)
+                    let markedForDeletion = visible[visible.length - 1]
+                    markedForDeletion.classList.toggle('visibility') 
+                    markedForDeletion.props.timeout = setTimeout(function(){
+                        markedForDeletion.remove()
+                    }, 10000)
+                    setTimeout(()=>resizeGeodesy(element), 50)
                 }
             }
 
