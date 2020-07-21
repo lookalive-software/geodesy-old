@@ -4,8 +4,17 @@ function motifStyle(id, motifData){
         [`#${id}[radius]`]:{
             "--radius": "100px"
         },
-        [`#${id}`]:{
+        [`#${id}[globalscale]`]:{
             "--globalscale": "1",
+        },
+        // foreground and background
+        [`#${id}[fg-color]`]:{
+            "--fg-color": "black",
+        },
+        [`#${id}[bg-color]`]:{
+            "--bg-color": "white",
+        },
+        [`#${id}`]:{
             "--twist": ".25turn",
             "top": `Calc(50vh - (var(--radius) / 2))`,
             "left": `Calc(50vw - (var(--radius) / 2))`
@@ -42,13 +51,13 @@ function motifStyle(id, motifData){
             // polygon color goes here
             "left":"3px",
             "top":"3px",
-            "background":"white",
         },
         [`#${id} target`]:{
             // "background":"white",
             "left":"0",
             "top":"0",
             "pointer-events":"all",
+            "background":"var(--bg-color)",
             // "transition":"all 0.25s"
         },
         [`#${id} target:hover`]: {

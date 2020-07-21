@@ -51,9 +51,10 @@
                     {"geodesy":{
                         "id": UUID,
                         "motif": motifName,
-                        "size": "20",
-                        "radius":"100px",
-                        "cast-shadow":"true"
+                        "radius":"100",
+                        "cast-shadow":"true",
+                        "norbit": "15",
+                        "globalscale": "1",
                     }}
                 ))
                 
@@ -63,27 +64,74 @@
                 ))
 
                 controlpanel(UUID, [
+                    {"label":[
+                        "tile size",
+                        {"input":{"id":"globalscale","type":"range","min":"0.1","max":"1.01","step":"0.01"}}
+                    ]},
                     {"label": [
                         "number of orbits", 
                         {"input":{
                             "id":"norbit","type":"range","min":"1","max":"50","step":"1"
-                            // "id":"tilesize","type":"range","min":"0.1","max":"1.05","step":"0.05"
                         }}
                     ]},
                     {"label": [
+                        "cast shadow", 
+                        {"input":{
+                            "id":"cast-shadow","type":"checkbox","checked":"true"
+                            // "id":"tilesize","type":"range","min":"0.1","max":"1.05","step":"0.05"
+                        }}
+                    ]}, 
+                    {"label": [
                         "radius", 
                         {"input":{
-                            "id":"radius","type":"range","min":"1","max":"200","step":"1"
-                        }}
+                            "id":"radius","type":"number","min":"1","max":"200","step":"1"
+                        }},
+                        "px"
+                    ]},
+                    {"label": [
+                        // "ax+b",
+                        {"input": {"type":"number", "min":"0","max":"50","step":"1","placeholder":"a","id":"a" }},
+                        "x + ",
+                        {"input": {"type":"number", "min":"0","max":"50","step":"1","placeholder":"b", "id":"b"}},
+                    ]},
+                    {"label": [
+                        "foreground/background",
+                        {"input": {"type":"color","id":"fg-color" }},
+                        {"input": {"type":"color", "id":"bg-color"}},
+                    ]},
+                    {"label": [
+                        "choose lattice",
+                        {"select id='motif'": [
+                            {"option": {"value": "none", "childNodes": ["none"]}},
+                            {"option": {"value": "square", "childNodes": ["square"]}},
+                            {"option": {"value": "pyritohedron", "childNodes": ["pyritohedron"]}},
+                            {"option": {"selected":"", "value": "p4octagon", "childNodes": ["p4octagon"]}},
+                            {"option": {"value": "honeycomb", "childNodes": ["honeycomb"]}},
+                        ]}
                     ]}
                 ], function({propName, oldValue, newValue}){
                     switch(propName){
-                        case 'tilesize':
+                        // maybe some photography settings
+                        case 'globalscale':
+                        case 'fg-color':
+                        case 'bg-color':
+                            this.setStyleVar(propName, newValue)
+                            break
                         case 'radius':
                             this.setStyleVar(propName, newValue + 'px')
                             break
                         case 'norbit':
                             resizeGeodesy(this)
+                            break
+                        case 'a':
+                        case 'b':
+                            let sheet = this.querySelector('style').sheet
+                            if(sheet.rules[0].selectorText.includes('norm:nth-child')){
+                                // there can only by one
+                                sheet.deleteRule(0)
+                            }
+                            sheet.insertRule(`norm:nth-child(${this.props.a || 1}n + ${this.props.b || 0}) target {background: var(--fg-color) !important}`)
+                            break
                     }
                 })
                 // document.body.innerElement = elementary(geodesyForm(UUID))

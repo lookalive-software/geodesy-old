@@ -78,7 +78,7 @@ window.controlpanel = function(elementID, template, callback){
     ))
 
 // the find all the inputs and iterate through them
-    Array.from(document.querySelectorAll(`form[target=${elementID}] input`),function(inputElement){
+    Array.from(document.querySelectorAll(`form[target=${elementID}] input, form[target=${elementID}] select`),function(inputElement){
         // create a set of references for an input that will need to be updates to a prop update...
         controls[inputElement.id] = inputElement
         // attach a listener to set props on the target with the value
