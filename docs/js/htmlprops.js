@@ -16,21 +16,24 @@ element.onAttributeChanged = function()
             this.setAttribute(prop, String(newValue))
         }
     
-        return Object.assign(attributeChange, {newValue: this.getAttribute(prop)})
+        this.emit('propModified', Object.assign(attributeChange, {newValue: this.getAttribute(prop)}))
     }
     
+    // this is all to register a callback to alert 
+    // when not have this just emit an event
+    // when the form is 
     Object.defineProperties(HTMLElement.prototype, {
         // following old style of attaching event listeners, set a function to element.onAttributeChanged = ({attribute, oldValue, newValue}) => {} 
-        onAttributeChanged: {
-            get(){
-                return this.attributeChangedCallback
-            },
-            set(data){
-                // incoming data is expecting to be a function
-                if(typeof data != 'function') throw new Error("onAttributeChanged can only be set to a callback")
-                this.attributeChangedCallback = data
-            }
-        },
+        // onAttributeChanged: {
+        //     get(){
+        //         return this.attributeChangedCallback
+        //     },
+        //     set(data){
+        //         // incoming data is expecting to be a function
+        //         if(typeof data != 'function') throw new Error("onAttributeChanged can only be set to a callback")
+        //         this.attributeChangedCallback = data
+        //     }
+        // },
         props: {
             get(){
                 let props = Array.from(this.attributes, attr => ({
@@ -40,9 +43,9 @@ element.onAttributeChanged = function()
                 return new Proxy(props, {
                     set: (obj, prop, value) => {
                         let update = updateAttribute.call(this, prop, value)
-                        if(typeof this.attributeChangedCallback == 'function'){
-                            this.attributeChangedCallback(update)
-                        }
+                        // if(typeof this.attributeChangedCallback == 'function'){
+                        //     this.attributeChangedCallback(update)
+                        // }
                         return true
                     },
                     get: (target, name) => {
@@ -53,9 +56,9 @@ element.onAttributeChanged = function()
             set(data){
                 Object.keys(data || {}).forEach(key => {
                     let update = updateAttribute.call(this, key, data[key])
-                    if(typeof this.attributeChangedCallback == 'function'){
-                        this.attributeChangedCallback(update)
-                    }
+                    // if(typeof this.attributeChangedCallback == 'function'){
+                    //     this.attributeChangedCallback(update)
+                    // }
                 })
             }
         },
