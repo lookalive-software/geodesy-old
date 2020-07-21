@@ -1,15 +1,17 @@
 
 function motifStyle(id, motifData){
     return {"style": Object.assign({
+        [`#${id}[radius]`]:{
+            "--radius": "100px"
+        },
         [`#${id}`]:{
-            "--radius": "100px",
             "--globalscale": "1",
             "--twist": ".25turn",
             "top": `Calc(50vh - (var(--radius) / 2))`,
             "left": `Calc(50vw - (var(--radius) / 2))`
         },
         [`#${id} norm`]:{
-            "transition":"all .25s"
+            "transition":"rotateX .25s"
         },
         [`#${id} norm.visibility`]:{
             "--twist": "0"
@@ -27,7 +29,7 @@ function motifStyle(id, motifData){
         },
         [`#${id} polygon`]: {
             "bottom": "0",
-            "transition":"all 1s",
+            "transition":"transform 1s",
         },
         [`#${id}[cast-shadow="true"] polygon`]: {
             // shadow blur goes here
@@ -55,7 +57,7 @@ function motifStyle(id, motifData){
         }}, // close style object, next argument for Object.assign is an array of polygon selectors
         ...motifData.map((shape, shapeIndex) => ({
             [`#${id} [polygon="${shapeIndex}"], #${id} [polygon="${shapeIndex}"] target`]: {
-                "clip-path": shape.polygon,
+                "clip-path": shape.clippath,
                 "--localscale": shape.scale
             }
         }))

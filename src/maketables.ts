@@ -71,7 +71,7 @@ fs.readdirSync('./motif').map(filename => {
     
     sortedNormData = Object
         .entries(normData)
-        .map(([norm, polygonData]) => [norm, λ.N(norm), polygonData])
+        .map(([norm, polygonData]) => [norm, λ.N(norm), polygonData.sort((a,b) => a.spin - b.spin)])
     
     sortedNormData.sort((a,b) => {
         return a[1] - b[1] // use numeric values to sort from smallest to largest 'ring' of neighbors

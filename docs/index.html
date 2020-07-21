@@ -5,8 +5,9 @@
         <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=">
         <script src="js/elementary.js"></script>
         <script src="js/kvetch.js"></script>
-        <script src="js/htmlprops.js"></script>
+        <script src="js/propmodified.js"></script>
         <script src="js/formbinder.js"></script>
+        <script src="js/controlpanel.js"></script>
     
         <!-- <script src="js/geodesyform.js" defer="true"></script> -->
         <!-- <script src="js/outTurf.js" defer="true"></script> -->
@@ -16,7 +17,7 @@
         <script src="templates/motifStyle.js"></script>
         <script src="templates/normData.js"></script>
     </head>
-    <body>
+    <body id="body">
         <script>
             document.body.innerElement = elementary(geodesyFormStyle())
 
@@ -51,58 +52,84 @@
                         "id": UUID,
                         "motif": motifName,
                         "size": "20",
+                        "radius":"100px",
                         "cast-shadow":"true"
                     }}
                 ))
                 
                 let uniqueGeodesy = document.getElementById(UUID)
-                document.body.innerElement = elementary(geodesyForm(UUID))
-                formbinder()
-                // need to step through form and trigger the same 'input changed' callback...
-
                 uniqueGeodesy.appendChild(createElementary(
                     motifStyle(UUID, window.cache[motifName].motif)
                 ))
+
+                controlpanel(UUID, [
+                    {"label": [
+                        "number of orbits", 
+                        {"input":{
+                            "id":"norbit","type":"range","min":"1","max":"50","step":"1"
+                            // "id":"tilesize","type":"range","min":"0.1","max":"1.05","step":"0.05"
+                        }}
+                    ]},
+                    {"label": [
+                        "radius", 
+                        {"input":{
+                            "id":"radius","type":"range","min":"1","max":"200","step":"1"
+                        }}
+                    ]}
+                ], function({propName, oldValue, newValue}){
+                    switch(propName){
+                        case 'tilesize':
+                        case 'radius':
+                            this.setStyleVar(propName, newValue + 'px')
+                            break
+                        case 'norbit':
+                            resizeGeodesy(this)
+                    }
+                })
+                // document.body.innerElement = elementary(geodesyForm(UUID))
+                // formbinder()
+                // need to step through form and trigger the same 'input changed' callback...
+
                 resizeGeodesy(uniqueGeodesy)
 
-                uniqueGeodesy.onAttributeChanged = function({attribute, oldValue, newValue}){
-                    // console.log({attribute, newValue})
-                    // console.log({"this":this})
-                    switch(attribute){
-                        case 'motif':
-                            destroyGeodesy(this).then(()=>{
-                                uniqueGeodesy.appendChild(createElementary(
-                                    motifStyle(UUID, window.cache[this.props.motif].motif)
-                                ))
-                                resizeGeodesy(this)
-                                // maybe even call formbinder again, to update the other values...
-                            })
-                            break
-                        case 'xoffset':
-                        case 'yoffset':
-                        case 'zoom':
-                            // 
-                            // this.querySelector('style').sheet.rule
-                            this.style.transform = `scale(${this.props.zoom || 1}) translateX(${this.props.xoffset || 0}vw) translateY(Calc(-1 * (${this.props.yoffset || 0}vh))`
-                            break
-                        case 'size':
-                            resizeGeodesy(this)
-                            break;
-                        case 'i':
-                        case 'j':
-                            let sheet = this.querySelector('style').sheet
-                            if(sheet.rules[0].selectorText.includes('norm:nth-child')){
-                                // there can only by one
-                                sheet.deleteRule(0)
-                            }
-                            // maybe set --active color
-                            // so I can use either one at a time painting or norm painting...
-                            // maybe --active-image too...
-                            // basically check if there's already a 'norm:nth-child()' selector...
-                            sheet.insertRule(`norm:nth-child(${this.props.i || 1}n + ${this.props.j || 0}) target {background: black !important}`)
-                            break
-                    }
-                }
+                // uniqueGeodesy.onAttributeChanged = function({attribute, oldValue, newValue}){
+                //     // console.log({attribute, newValue})
+                //     // console.log({"this":this})
+                //     switch(attribute){
+                //         case 'motif':
+                //             destroyGeodesy(this).then(()=>{
+                //                 uniqueGeodesy.appendChild(createElementary(
+                //                     motifStyle(UUID, window.cache[this.props.motif].motif)
+                //                 ))
+                //                 resizeGeodesy(this)
+                //                 // maybe even call formbinder again, to update the other values...
+                //             })
+                //             break
+                //         case 'xoffset':
+                //         case 'yoffset':
+                //         case 'zoom':
+                //             // 
+                //             // this.querySelector('style').sheet.rule
+                //             this.style.transform = `scale(${this.props.zoom || 1}) translateX(${this.props.xoffset || 0}vw) translateY(Calc(-1 * (${this.props.yoffset || 0}vh))`
+                //             break
+                //         case 'size':
+                //             resizeGeodesy(this)
+                //             break;
+                //         case 'i':
+                //         case 'j':
+                //             let sheet = this.querySelector('style').sheet
+                //             if(sheet.rules[0].selectorText.includes('norm:nth-child')){
+                //                 // there can only by one
+                //                 sheet.deleteRule(0)
+                //             }
+                //             // maybe set --active color
+                //             // so I can use either one at a time painting or norm painting...
+                //             // maybe --active-image too...
+                //             // basically check if there's already a 'norm:nth-child()' selector...
+                //             sheet.insertRule(`norm:nth-child(${this.props.i || 1}n + ${this.props.j || 0}) target {background: black !important}`)
+                //             break
+                //     }
+                // }
 
                 return uniqueGeodesy
             }
@@ -130,7 +157,7 @@
 
             function resizeGeodesy(element){
                 let visible = element.querySelectorAll('norm.visibility')
-                if(visible.length < element.props.size){ // implicit conversion from string to number for comparison
+                if(visible.length < element.props.norbit){ // implicit conversion from string to number for comparison
                 // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
 
                 // call elementary with this polygondata [name, number, polygondData[]]
@@ -151,7 +178,7 @@
                     
                     setTimeout(function(){ resizeGeodesy(element) }, 50)
                 }
-                if(visible.length > element.props.size ){
+                if(visible.length > element.props.norbit ){
                     // then delete child.
                     // could set some attribute to hide it / apply animation, delete it 50 ms later... 
                     let markedForDeletion = visible[visible.length - 1]
