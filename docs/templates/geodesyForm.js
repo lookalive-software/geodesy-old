@@ -135,7 +135,7 @@ let geodesyControl = controlpanel.bind(null, [
             ]}
         ]}
     ]},
-    {"fieldset": [
+    {"fieldset": [ // changes to a and b will recalculate bitmask 
         {"details":[
             {"summary": [{"legend": ["Linear Paint"]}]},
             {"label":[
@@ -147,11 +147,50 @@ let geodesyControl = controlpanel.bind(null, [
                 "b"
             ]}
         ]}
+    ]},
+    {"fieldset":[ // change of bitmask will cause fill=true reflow
+        {"details":[
+            {"summary": [{"legend": ["Bitmask Paint"]}]},
+            {"label":[
+                {"input": {"type":"textarea"}}
+            ]},
+        ]},
+    ]},
+    {"fieldset": [
+        {"details":[
+            {"summary": [{"legend": ["Background Image"]}]},
+            {"label":[
+                "image url",
+                {"input": {"type":"text", "name":"bg-url" }},
+            ]},
+            {"label":[
+                "zoom",
+                {"input": {"type":"range", "min":"5","max":"250","name":"bg-zoom" }},
+            ]},
+            {"label":[
+                "x offset",
+                {"input": {"type":"range", "min":"5","max":"250","name":"bg-xoffset" }},
+            ]},
+            {"label":[
+                "y offset",
+                {"input": {"type":"range", "min":"5","max":"250","name":"bg-yoffset" }},
+            ]},
+            {"label":[
+                "center facing",
+                {"input": {"type":"checkbox","name":"bg-counter-rotate" }},
+            ]}
+        ]}
     ]}
     ], function({propName, oldValue, newValue}){
         // this propModifiedCallback is called with 'this' as the target element of the form.
         switch(propName){
             // maybe some photography settings
+            case 'bg-url':
+                this.setStyleVar(propName, `url(${newValue})`)
+                break
+            case 'bg-zoom':
+                this.setStyleVar(propName, newValue + '%')
+                break
             case 'fg-color':
             case 'bg-color':
             case 'backoff':
@@ -170,7 +209,8 @@ let geodesyControl = controlpanel.bind(null, [
                     // there can only by one
                     sheet.deleteRule(0)
                 }
-                sheet.insertRule(`norm:nth-child(${this.props.a || 1}n + ${this.props.b || 0}) target {background: var(--fg-color) !important}`)
+                // calculate new bitmask from ax+b
+                sheet.insertRule(`norm:nth-child(${this.props.a || 1}n + ${this.props.b || 0}) target {!important}`)
                 break
             case 'motif':
                 if(newValue != oldValue){
