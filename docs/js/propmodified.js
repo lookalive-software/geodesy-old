@@ -30,6 +30,7 @@ element.onAttributeChanged = function()
     }
 
     HTMLElement.prototype.setStyleVar = function(varname, newvalue){
+        if(!this.querySelector('style')) throw new Error("setStyleVar assumes a stylesheet exists within this element")
         Array.from(this.querySelector('style').sheet.rules, rule => {
             // console.log(rule)
             if(rule.selectorText.includes(`[${varname}]`)){
@@ -38,9 +39,7 @@ element.onAttributeChanged = function()
             }
         })
     }
-    // this is all to register a callback to alert 
-    // when not have this just emit an event
-    // when the form is 
+
     Object.defineProperties(HTMLElement.prototype, {
         props: {
             get(){

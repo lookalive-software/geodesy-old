@@ -21,6 +21,9 @@ window.controlpanel = function(template, callback, target){
                 case 'checkbox':
                     target.props[event.target.name] = event.target.checked
                     break
+                case 'radio':
+                    target.props[event.target.name] = event.target.id
+                    break
                 default:
                     target.props[event.target.name] = event.target.value
 
@@ -39,6 +42,6 @@ window.controlpanel = function(template, callback, target){
         callback.call(target, {propName, oldValue, newValue}) // then use the actual callback
     })
 
-    target.props = target.props // should populate form with values already on the target
+    // target.props = target.props // should populate form with values already on the target
     return formFragment
 }

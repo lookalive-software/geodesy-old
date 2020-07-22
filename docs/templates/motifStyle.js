@@ -16,7 +16,7 @@ function motifStyle(id, motifData){
         },
         [`#${id}`]:{
             "--twist": ".25turn",
-            "top": `Calc(50vh - (var(--radius) / 2))`,
+            "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
             "left": `Calc(50vw - (var(--radius) / 2))`
         },
         [`#${id} norm`]:{
@@ -30,7 +30,7 @@ function motifStyle(id, motifData){
             "position": "absolute",
             "height": "var(--radius)",
             "width": "var(--radius)",
-             "pointer-events": "none"
+            "pointer-events": "none"
         },
         [`#${id} spin`]:{
             "transform-origin": `Calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
@@ -38,7 +38,7 @@ function motifStyle(id, motifData){
         },
         [`#${id} polygon`]: {
             "bottom": "0",
-            "transition":"transform 1s",
+            "transition":"transform 0.5s",
         },
         [`#${id} target`]:{
             // "background":"white",

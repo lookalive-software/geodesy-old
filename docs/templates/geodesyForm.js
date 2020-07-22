@@ -99,7 +99,7 @@ let geodesyControl = controlpanel.bind(null, [
         {"label": [
             "radius", 
             {"input":{
-                "name":"radius","type":"number","min":"1","max":"200","step":"1"
+                "name":"radius","type":"number","min":"5","max":"200","step":"5"
             }},
         ]},
         {"label": [
