@@ -41,7 +41,9 @@ window.controlpanel = function(template, callback, target){
         }
         callback.call(target, {propName, oldValue, newValue}) // then use the actual callback
     })
-
+    // can't do this because I need style to exist before actually calling all the listeners
+    // probably a bad design
+    // if only there was a way to manage lifecycle
     // target.props = target.props // should populate form with values already on the target
     return formFragment
 }

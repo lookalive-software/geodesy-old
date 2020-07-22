@@ -12,7 +12,7 @@ element.onAttributeChanged = function()
         console.log("PROP", attributeChange, {newValue})
         
         if(typeof newValue == "undefined"){
-            this.removeAttribute(prop)
+            this.removeAttribute(prop) // realize getAttribute returns null if nothing exists at this address
         } else if(typeof newValue == "object"){
             this.setAttribute(prop, JSON.stringify(newValue))
         } else {

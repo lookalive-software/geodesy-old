@@ -61,7 +61,9 @@ function motifStyle(id, motifData){
         [`#${id} polygon`]: {
             "bottom": "0",
             "transition":"transform 0.5s",
-            "background": "var(--bg-color)"
+            // the background was on a :before element, I could apply scale to it when it dissapears
+            "background": "var(--bg-color)",
+            "pointer-events":"all",
         },
         [`#${id}[fillmode="merge"] polygon`]: {
             "transform":
@@ -69,7 +71,10 @@ function motifStyle(id, motifData){
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
-        [`#${id}[fillmode="merge"] target`]: {
+        [
+            `#${id}[fillmode="merge"] target, ` + 
+            `#${id}[fillmode="none"] target`
+        ]: {
             "transform": "scale(var(--backoff))"
         },
         [`#${id}[fillmode="split"] polygon`]: {
@@ -86,7 +91,6 @@ function motifStyle(id, motifData){
         [`#${id} target`]:{
             "left":"0",
             "top":"0",
-            "pointer-events":"all",
             "background":"transparent"
             // maybe scale here
             // "transition":"all 0.25s"

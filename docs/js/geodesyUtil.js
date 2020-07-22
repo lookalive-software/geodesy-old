@@ -9,7 +9,9 @@ function geodesyCreate(element){
     element.appendChild(createElementary(
         motifStyle(element.id, window.cache[element.props.motif].motif)
     ))
-
+        // needed to do this in control panel too
+        // but that only happens when its first connected
+        // this re-fires the propmodified events to the form upon creation
     element.props = element.props
         // document.body.appendChild(temp.content/)
         // attach style to document

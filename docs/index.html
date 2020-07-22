@@ -19,16 +19,17 @@
     <body id="body">
         <geodesy
             id="honeycombA"
-            motif="honeycomb"
             shells="15"
             radius="100"
             bg-color="#00ff00"
             fg-color="#0000ff"
             backoff="1.05"
+            fillmode="merge"
+            draw="paint"
         ></geodesy>
         <script>
             // attach listener to geodesy, onclick, toggle active class of event.target.
-
+            
             // document.body.innerElement = elementary(geodesyFormStyle())
 
             /*
@@ -53,6 +54,17 @@
                     // add form to control it...
                     // geodesyCreate(geodesyElement) // create the style element first
                     document.body.appendChild(geodesyControl(geodesyElement))
+                    geodesyElement.props.motif = "p4octagon"
+                    geodesyElement.addEventListener('click', event => {
+
+                        // if signal came from a polygon, set 'active' on its target
+
+                        // set active true or false based on whether draw mod is paint (or erase)
+                        event.target.firstChild.props.active = (geodesyElement.props.draw === 'paint')
+                    })
+                    // just because motif is the prop that sets it all off
+                    // it has to be called before any other attributes
+                    // so I guess that means there has to be some external means to kick it off :/
                 })
             })
             // for the attribute change listeners on each geodesy element...

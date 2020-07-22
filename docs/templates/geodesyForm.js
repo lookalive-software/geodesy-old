@@ -135,6 +135,21 @@ let geodesyControl = controlpanel.bind(null, [
             ]}
         ]}
     ]},
+    {"fieldset": [
+        {"section":[
+            {"div":[
+                {"input": {"type":"radio", "name":"draw", "id":"paint", "checked":""}},
+                {"button type='button'": [{"label for='paint'":["paint"]}]}
+            ]},
+            {"div":[
+                {"input": {"type":"radio", "name":"draw", "id":"erase"}},
+                {"button type='button'": [{"label for='erase'":["erase"]}]},
+            ]}
+        ]}
+    ]},
+    // maybe a checkbox for "right click to erase'
+    // but for now I need a field set that sets an interactive flag
+    // draw=paint draw=erase
     {"fieldset": [ // changes to a and b will recalculate bitmask 
         {"details":[
             {"summary": [{"legend": ["Linear Paint"]}]},
@@ -148,14 +163,14 @@ let geodesyControl = controlpanel.bind(null, [
             ]}
         ]}
     ]},
-    {"fieldset":[ // change of bitmask will cause fill=true reflow
-        {"details":[
-            {"summary": [{"legend": ["Bitmask Paint"]}]},
-            {"label":[
-                {"input": {"type":"textarea"}}
-            ]},
-        ]},
-    ]},
+    // {"fieldset":[ // change of bitmask will cause fill=true reflow
+    //     {"details":[
+    //         {"summary": [{"legend": ["Bitmask Paint"]}]},
+    //         {"label":[
+    //             {"input": {"type":"textarea"}}
+    //         ]},
+    //     ]},
+    // ]},
     {"fieldset": [
         {"details":[
             {"summary": [{"legend": ["Background Image"]}]},
@@ -233,7 +248,7 @@ let geodesyControl = controlpanel.bind(null, [
                 // }
                 // iterate through this newly create true/false pattern
                 // and iterate through all the targets (is the order deterministic, in order of the cached data?)
-                //
+                // I need the bitmask activate routine running whenever norms are created
                 norms.map((normElement, normIndex) => {
                     normElement.props.active = false // clear out 
                 })
