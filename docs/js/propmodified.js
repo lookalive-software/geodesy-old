@@ -9,7 +9,8 @@ element.onAttributeChanged = function()
 
     function updateAttribute(prop, newValue){
         let attributeChange = {propName: prop, oldValue: this.getAttribute(prop)}
-    
+        console.log("PROP", attributeChange, {newValue})
+        
         if(typeof newValue == "undefined"){
             this.removeAttribute(prop)
         } else if(typeof newValue == "object"){
@@ -18,6 +19,8 @@ element.onAttributeChanged = function()
             this.setAttribute(prop, String(newValue))
         }
     
+        // console.log(attributeChange, {newValue})
+
         this.dispatchEvent(new CustomEvent('propModified', {
             "detail": Object.assign(
                 attributeChange,

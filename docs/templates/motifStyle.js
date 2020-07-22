@@ -4,8 +4,8 @@ function motifStyle(id, motifData){
         [`#${id}[radius]`]:{
             "--radius": "100px"
         },
-        [`#${id}[globalscale]`]:{
-            "--globalscale": "1",
+        [`#${id}[backoff]`]:{
+            "--backoff": "1",
         },
         // foreground and background
         [`#${id}[fg-color]`]:{
@@ -40,18 +40,6 @@ function motifStyle(id, motifData){
             "bottom": "0",
             "transition":"transform 1s",
         },
-        [`#${id}[cast-shadow="true"] polygon`]: {
-            // shadow blur goes here
-            // shadow color goes here
-            "background": "#aaa",
-            "filter":"blur(3px)",
-        },
-        [`#${id}[cast-shadow="true"] target`]:{
-            // shadow offset goes here
-            // polygon color goes here
-            "left":"3px",
-            "top":"3px",
-        },
         [`#${id} target`]:{
             // "background":"white",
             "left":"0",
@@ -59,10 +47,6 @@ function motifStyle(id, motifData){
             "pointer-events":"all",
             "background":"var(--bg-color)",
             // "transition":"all 0.25s"
-        },
-        [`#${id} target:hover`]: {
-            "left":"6px",
-            "top":"6px"
         }}, // close style object, next argument for Object.assign is an array of polygon selectors
         ...motifData.map((shape, shapeIndex) => ({
             [`#${id} [polygon="${shapeIndex}"], #${id} [polygon="${shapeIndex}"] target`]: {

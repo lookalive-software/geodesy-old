@@ -10,7 +10,7 @@ function normData(id, [symbolicNorm, numericNorm, spinData]){
                     {"polygon":{
                         "polygon": `${spin.polygon}`,
                         "style": {"transform": 
-                            `scale(Calc(var(--globalscale) * var(--localscale))) ` +
+                            `scale(Calc(var(--backoff) * var(--localscale))) ` +
                             `rotateX(var(--twist)) ` +
                             `rotate(Calc(-1 * ${spin.spin}rad))`},
                         "childNodes":[{"target": {
