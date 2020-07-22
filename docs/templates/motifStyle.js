@@ -47,9 +47,12 @@ function motifStyle(id, motifData){
             // maybe I can try to scale to my height? my height is radius!
             "height": "calc(var(--radius) * var(--norm) + var(--radius))"
         },
-        [`#${id} norm.visibility`]:{
+        [`#${id} norm.visibility`]:{ // visibility applies to both polygon and target, whether the ring is being displayed
             "--twist": "0"
         },
+
+        // I'm just calculating the visibility of whole norms right now.
+        // so, it's back to the old question of, how do I order all these polygons?
         [`#${id} spin`]:{
             "transform-origin": `Calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
             "height":"inherit",
@@ -88,7 +91,11 @@ function motifStyle(id, motifData){
             // maybe scale here
             // "transition":"all 0.25s"
         }, // close style object, next argument for Object.assign is an array of polygon selectors
-        [`#${id} target.visibility:before`]:{
+
+        [ // if EITHER the norm OR the target is set to 'active', apply the background 
+            `#${id} norm[active="true"] target:before,` +
+            `#${id} norm target[active="true"]:before`
+        ]:{
             "width":"inherit",
             "height":"inherit",
             "background":"var(--fg-color)",

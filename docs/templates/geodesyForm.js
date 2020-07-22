@@ -204,13 +204,48 @@ let geodesyControl = controlpanel.bind(null, [
                 break
             case 'a':
             case 'b':
-                let sheet = this.querySelector('style').sheet
-                if(sheet.rules[0].selectorText.includes('norm:nth-child')){
-                    // there can only by one
-                    sheet.deleteRule(0)
-                }
+            // instead of top to bottom everything is inward and outward
+                // for getting a bitmask from a linear function
+                // create an array of 0s as long as you need
+                // count up the length, while lastIndex < bitmask.length, 
+                
+                // while(a*x + b < bitmask.length){
+                //     bitmask[a*x + b] = true
+                //     x++
+                // }
+                // bitmask.map(Number).map(String).flat
+                // // eat through the bitmask array 8 elements at a time, converting them to hexadecimal.
+                // this.props.bitmask = "ff"
                 // calculate new bitmask from ax+b
-                sheet.insertRule(`norm:nth-child(${this.props.a || 1}n + ${this.props.b || 0}) target {!important}`)
+                let norms = Array.from(this.querySelectorAll('norm'))
+                let bitmask = Array.from({length: norms.length}).fill(false)
+                let a = parseInt(this.props.a) || 0 // hilarious, got but by duck typing, attribute was a string, "1" + 0 = 10 !
+                let b = parseInt(this.props.b) || 0
+                let x = 0
+                console.log({x,a,b, axb: (a * x + b)})
+                // check that the solution is within my bitmask length
+                // and then set that length as 'true' according to our ax + b rule
+
+                // while((a * x + b) <= bitmask.length){
+                //     console.log({x,a,b, axb: (a * x + b)})
+                //     bitmask[a * x + b] = true
+                //     x++
+                // }
+                // iterate through this newly create true/false pattern
+                // and iterate through all the targets (is the order deterministic, in order of the cached data?)
+                //
+                norms.map((normElement, normIndex) => {
+                    normElement.props.active = false // clear out 
+                })
+                norms.map((normElement, normIndex) => {
+                    // for each element there is, plug it into ax + b, and set THAT element as active
+                    if( norms[a * normIndex + b] ){
+                        norms[a * normIndex + b].props.active = true
+                    }
+                    // normElement.props.active = bitmask[normIndex] // this is gonna set the on off value for each of the norms
+                })
+                // so that sets the isVisible prop as true or false according to the calculated bitmask Boolean[]
+                // sheet.insertRule(`norm:nth-child(${this.props.a || 1}n + ${this.props.b || 0}) target {!important}`)
                 break
             case 'motif':
                 if(newValue != oldValue){
