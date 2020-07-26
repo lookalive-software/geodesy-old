@@ -6,7 +6,7 @@ window.formStyle = function(){
     "form":{
         "z-index":"1",
         "padding": "10px 0",
-        "width":"300px",
+        "width":"280px",
         "background":"#d3d3d37d",
         "position":"absolute",
         "border":"1px solid rgba(0,0,0,0.2)",
@@ -17,9 +17,26 @@ window.formStyle = function(){
         "justify-content":"space-evenly",
         "align-items":"center",
     },
+    "form > details:first-child": {
+        "width":"90%",
+    },
+    "form > details:first-child > summary": {
+        "margin-bottom":"15px"
+    },
+    "form > details:first-child > summary > input": {
+        "width":"90%",
+        "background": "transparent",
+        "border":"none",
+        "border-bottom":"2px solid black"
+    },
+    "button[type=\"submit\"]":{
+        "border-radius": "8px",
+        "padding": "8px 0",
+        "width": "100%"
+    },
     "fieldset": {
         "margin-bottom":"10px",
-        "width":"80%",
+        // "width":"80%",
         "border-radius":"8px",
         "display":"flex",
         "flex-direction":"column",
@@ -56,11 +73,17 @@ window.formStyle = function(){
     "input[type=\"checkbox\"]": {
         "width":"20px","height":"20px"
     },
-    "input[type=\"radio\"] ~ button ": {
+    "input[type=\"radio\"] ~ label ": {
         "opacity":"0.5",
         "position":"relative",
+        "-webkit-appearance": "button",
+        "-moz-appearance": "button",    
+        "appearance": "button",
+        "padding":"3px",
+        "font-weight":"normal",
+        "font-size":"medium"
     },
-    "input[type=\"radio\"]:checked ~ button ": {
+    "input[type=\"radio\"]:checked ~ label ": {
         "opacity":"1",
         "box-shadow": "3px 2px 1px black",
         "top":"-3px",
@@ -95,7 +118,7 @@ window.formStyle = function(){
     },
     "summary > legend":{
         "position":"relative",
-        "top":"-1em",
+        "top":"-0.9em",
         "left":"1em"
     }
     }}
