@@ -1,8 +1,7 @@
-function normData(id, [symbolicNorm, numericNorm, spinData]){
+window.normTemplate = function(id, [symbolicNorm, numericNorm, spinData]){
     return {"norm": {
         "id": id,
         "style": {"--norm": numericNorm },
-        // "style": {"height": `Calc(var(--radius) * ${numericNorm} + var(--radius))`},
         "neighbors": spinData.length,
         "childNodes": spinData.map(spin => ({
             "spin": {
@@ -19,12 +18,3 @@ function normData(id, [symbolicNorm, numericNorm, spinData]){
         }))
     }}
 }
-
-// somepoint I renamed localscale to backoff
-
-// polygon has a clippath polygon
-// target is give the same --localscale variable and clippath
-// Three conditions to address:
-    // joined -- polygon has its bg-color, and its --globalscale is set to 1.05 to overlap
-    // seperate -- polygon has its bg-color, its --global scale is same as the target
-    // none -- polygon has transparent background. 

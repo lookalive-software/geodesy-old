@@ -9,7 +9,6 @@ element.onAttributeChanged = function()
 
     function updateAttribute(prop, newValue){
         let attributeChange = {propName: prop, oldValue: this.getAttribute(prop)}
-        console.log("PROP", attributeChange, {newValue})
         
         if(typeof newValue == "undefined"){
             this.removeAttribute(prop) // realize getAttribute returns null if nothing exists at this address
@@ -19,25 +18,12 @@ element.onAttributeChanged = function()
             this.setAttribute(prop, String(newValue))
         }
     
-        // console.log(attributeChange, {newValue})
-
         this.dispatchEvent(new CustomEvent('propModified', {
             "detail": Object.assign(
                 attributeChange,
                 {newValue: this.getAttribute(prop)}
             )
         }))
-    }
-
-    HTMLElement.prototype.setStyleVar = function(varname, newvalue){
-        if(!this.querySelector('style')) throw new Error("setStyleVar assumes a stylesheet exists within this element")
-        Array.from(this.querySelector('style').sheet.rules, rule => {
-            // console.log(rule)
-            if(rule.selectorText.includes(`[${varname}]`)){
-                // overwrite the csstext of any matching rule of the embedded stylesheet
-                rule.style.cssText = `--${varname}: ${newvalue}`
-            }
-        })
     }
 
     Object.defineProperties(HTMLElement.prototype, {

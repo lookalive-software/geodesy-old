@@ -1,94 +1,89 @@
+// creates a global function that can be run when you're ready to append the global style for norms and polygons etc
+window.motifStyle = function(){
+    // how about on creation, I iterate through the required values, throw an error if one is missing
+    // so I just have to create an object entry for each of the vars
+    // and then when the form attaches itself to the style form, it can scan for each of these vars and keep reference to their selectorText
+    // making stylesheet overwrites quick to update the CSS custom properties
 
-function motifStyle(id, motifData){
-    return {"style": Object.assign({
-        // could set a bunch of defaults
-        // for my stylevar overwriter,
-        // I'm going to start at the end of the list and step backwards
-        // to find the selectortext that matches the new selectortext
-        // if I get to the top, I insert a rule at the end. only happens first time.
-        // is a few array loops but just comparing for an exact match against a string...
-        [`#${id}[radius]`]:{
-            "--radius": "100px"
-        },
-        [`#${id}[backoff]`]:{
-            "--backoff": "1",
-        },
-        // foreground and background
-        [`#${id}[fg-color]`]:{
-            "--fg-color": "black",
-        },
-        [`#${id}[bg-color]`]:{
-            "--bg-color": "white",
-        },
-        [`#${id}[bg-url]`]:{
-            "--bg-url": "",
-        },
-        [`#${id}[bg-zoom]`]:{
-            "--bg-zoom": "",
-        },
-        [`#${id}`]:{
-            "--twist": ".25turn",
+    // for instance, foreground URL is required, but default value is blank string
+    // expecting this data from the form, I guess it should be a schema, but it will let me perform serverside rendering painlesslessly
+    // so I could have transparent iframes stacking up multiple geodesies and each form has a single iframe as its target. Well I don"t know if pointer events works through iframes we"ll see.
+    // can I measure response time on the iframe to decide how quickly to request updates? 
+    return {"style": Object.assign(
+        ...Object.entries(window.cache).flatMap(([motifName, {motif}]) =>
+            motif.map((shape, shapeIndex) => ({
+                [
+                    `[motif="${motifName}"] [polygon="${shapeIndex}"], ` +
+                    `[motif="${motifName}"] [polygon="${shapeIndex}"] target`
+                ]: {
+                    "clip-path": shape.clippath,
+                    "--localscale": shape.scale // this was a bad idea, clippath should be equal scale everywhere
+                }
+            }))
+        ),{
+        "geodesy":{
             "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
             "left": `Calc(50vw - (var(--radius) / 2))`
         },
-
-        [`#${id}, #${id} norm, #${id} spin, #${id} polygon, #${id} target`]:{
+        "norm,  spin,  polygon,  target":{
             "display": "block",
             "position": "absolute",
             "height": "var(--radius)",
             "width": "var(--radius)",
             "pointer-events": "none"
-        },// hilarious, I forgot that my main "width height for everyone" got pushed down from the top of the stylesheet
-        // so I was like "why isn't this equation setting the height??? "
-        [`#${id} norm`]:{
+        },
+        "norm":{
             "transition":"rotateX .25s",
-            // seems that transform can get access to a directally set variable
-            // but height is having trouble grabbing it from here...
-            // maybe I can try to scale to my height? my height is radius!
             "height": "calc(var(--radius) * var(--norm) + var(--radius))"
         },
-        [`#${id} norm.visibility`]:{ // visibility applies to both polygon and target, whether the ring is being displayed
+        "norm.visibility":{ // visibility applies to both polygon and target, whether the ring is being displayed
             "--twist": "0"
         },
 
-        // I'm just calculating the visibility of whole norms right now.
-        // so, it's back to the old question of, how do I order all these polygons?
-        [`#${id} spin`]:{
-            "transform-origin": `Calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
+        // I"m just calculating the visibility of whole norms right now.
+        // so, it"s back to the old question of, how do I order all these polygons?
+        "spin":{
+            "transform-origin": `calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
             "height":"inherit",
             "transform": "rotate(var(--spin))"
         },
-        [`#${id} polygon`]: {
+        "polygon": {
             "bottom": "0",
-            "transition":"transform 0.5s",
+            "transition":"transform 0.5s", // I should extract these, is this for size probable?
             // the background was on a :before element, I could apply scale to it when it dissapears
-            "background": "var(--bg-color)",
+            "background": "var(--infracolor)",
             "pointer-events":"all",
         },
-        [`#${id}[fillmode="merge"] polygon`]: {
+    // polygon has a clippath polygon
+    // target is give the same --localscale variable and clippath, im sure i'm messing something up by modifying localscale when its also applied globally
+    // Three conditions to address:
+        // joined -- polygon has its bg-color, and its --globalscale is set to 1.05 to overlap
+        // seperate -- polygon has its bg-color, its --global scale is same as the target
+        // none -- polygon has transparent background. 
+        "[fillmode=\"merge\"] polygon": {
             "transform":
                 `scale(calc(1.05 * var(--localscale))) ` +
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
         [
-            `#${id}[fillmode="merge"] target, ` + 
-            `#${id}[fillmode="none"] target`
+            `[fillmode="merge"] target, ` + 
+            `[fillmode="none"] target`
         ]: {
             "transform": "scale(var(--backoff))"
         },
-        [`#${id}[fillmode="split"] polygon`]: {
+        "[fillmode=\"split\"] polygon": {
             "transform":
                 `scale(calc(var(--backoff) * var(--localscale))) ` +
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
-        [`#${id}[fillmode="none"] polygon`]: {
+        "[fillmode=\"none\"] polygon": {
             "background": "transparent",
             "transform":
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
-        [`#${id} target`]:{
+        [` target`]:{
             "left":"0",
             "top":"0",
             "background":"transparent"
@@ -96,9 +91,9 @@ function motifStyle(id, motifData){
             // "transition":"all 0.25s"
         }, // close style object, next argument for Object.assign is an array of polygon selectors
 
-        [ // if EITHER the norm OR the target is set to 'active', apply the background 
-            `#${id} norm[active="true"] target:before,` +
-            `#${id} norm target[active="true"]:before`
+        [ // if EITHER the norm OR the target is set to "active", apply the background 
+            ` norm[active="true"] target:before,` +
+            ` norm target[active="true"]:before`
         ]:{
             "width":"inherit",
             "height":"inherit",
@@ -112,17 +107,11 @@ function motifStyle(id, motifData){
             "transform":"scale(2)"
         },
         // maybe later there can be an option to 
-        // randomize or just randomly shift the location of an image you're zoomed in on
+        // randomize or just randomly shift the location of an image you"re zoomed in on
         // so you can brake up the regularity a bit by showing different segments of the image
-        [`#${id}[bg-counter-rotate="true"] target:before`]:{
-            "transform":`scale(2) rotate(var(--spin))`
-        }},
-        ...motifData.map((shape, shapeIndex) => ({
-            [`#${id} [polygon="${shapeIndex}"], #${id} [polygon="${shapeIndex}"] target`]: {
-                "clip-path": shape.clippath,
-                "--localscale": shape.scale
-            }
-        }))
-    )}
+        [`[bg-counter-rotate="true"] target:before`]:{
+            "transform":`scale(2) rotate(var(--spin)) !important`
+        }
+    })}
 }
 

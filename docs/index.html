@@ -6,23 +6,25 @@
         <script src="js/elementary.js"></script>
         <script src="js/kvetch.js"></script>
         <script src="js/propmodified.js"></script>
-        <script src="js/formbinder.js"></script>
+        <!-- <script src="js/formbinder.js"></script> -->
         <script src="js/controlpanel.js"></script>
+        <!-- <script src="js/shiftspace.js"></script> -->
     
         <script src="js/geodesyUtil.js" defer="true"></script>
         <!-- <script src="js/outTurf.js" defer="true"></script> -->
 
-        <script src="templates/geodesyForm.js"></script> <!--returns controlgeodesy function -->
-        <script src="templates/motifStyle.js"></script>
-        <script src="templates/normData.js"></script>
+        <script src="templates/formTemplate.js"></script> <!--a template to generate forms -->
+        <script src="templates/formStyle.js"></script> <!--global stylesheet for all forms -->
+        <script src="templates/motifStyle.js"></script> <!-- global stylesheet for all geodesy motifs-->
+        <script src="templates/normTemplate.js"></script> <!-- generates polygons and targets-->
     </head>
     <body id="body">
         <geodesy
             id="honeycombA"
             shells="15"
             radius="100"
-            bg-color="#00ff00"
-            fg-color="#0000ff"
+            bg-color="#000000"
+            fg-color="#ffffff"
             backoff="1.05"
             fillmode="merge"
             draw="paint"
@@ -43,9 +45,46 @@
                 kvetch.get(`cache/pyritohedron.json`).then(res => window.cache.pyritohedron = res),
                 kvetch.get(`cache/honeycomb.json`).then(res => window.cache.honeycomb = res),
                 kvetch.get(`cache/p4octagon.json`).then(res => window.cache.p4octagon = res)
-            ]).then(()=>{
+            ]).then(()=>{ // create the form with all available options
+                // when the form is submitted, it generates a random ID, 
+                document.head.appendChild(createElementary([
+                    motifStyle(), // uses window.cache and generates stylesheet, attaches to head
+                    formStyle()
+                ]))
+                // document.body.getElementById('nav') // how about focusing a form sets the active element in the title, and jumps to position on screen
+                document.body.appendChild(controlpanel(formTemplate)) // no taret to start
+                // want to make sure when created and destroyed, I use my bitmask and everything to apply old props to new pattern
+                document.querySelector('form:not([target])').addEventListener('submit', event => {
+                    event.preventDefault()
+                    let newprops = {id: geodesy.getRandomID()}
+                    Array.from(event.target.querySelectorAll('input, select, textarea'), inputElement => {
+                        switch(inputElement.type){
+                            case 'checkbox':
+                                newprops[inputElement.name] = inputElement.checked
+                                break
+                            case 'radio':
+                                newprops[inputElement.name] = inputElement.id
+                                break
+                            default:
+                                newprops[inputElement.name] = inputElement.value
+                        }
+                    })
+                    if(!newprops.title){
+                        newprops.title = newprops.id
+                    }
+                    console.log(newprops)
+                    // if title is blank set randomID as title
+                    // if its changed, title is changed, but target + ID stay the random one
 
-                Array.from(document.querySelectorAll('geodesy'), geodesyElement => {
+                    // document.body.appendChild(createElementary({geodesy: newprops}))
+                    // document.body.appendChild(controlpanel(formTemplate, geodesy.propModified, ))
+                })
+
+                // on submit.... create a control panel with geodesy.propModified listener
+            })
+                // Array.from(document.querySelectorAll('geodesy'), geodesyElement => {
+                    // create form without a target, make sure default values exist
+
                     // what to do for each geodesy element already on the page
                     // ideally to save the state of the page, 
                     // just take the list of geodesy elements and get their props
@@ -53,20 +92,21 @@
 
                     // add form to control it...
                     // geodesyCreate(geodesyElement) // create the style element first
-                    document.body.appendChild(geodesyControl(geodesyElement))
-                    geodesyElement.props.motif = "p4octagon"
-                    geodesyElement.addEventListener('click', event => {
+                    // altspace(geodesyElement) // give click and drag control for paintbrush
+                    // document.body.appendChild(geodesyControl(geodesyElement))
+                    // geodesyElement.props.motif = "p4octagon"
+                    // geodesyElement.addEventListener('click', event => {
 
-                        // if signal came from a polygon, set 'active' on its target
+                    //     // if signal came from a polygon, set 'active' on its target
 
-                        // set active true or false based on whether draw mod is paint (or erase)
-                        event.target.firstChild.props.active = (geodesyElement.props.draw === 'paint')
-                    })
+                    //     // set active true or false based on whether draw mod is paint (or erase)
+                    //     inputElement.firstChild.props.active = (geodesyElement.props.draw === 'paint')
+                    // })
                     // just because motif is the prop that sets it all off
                     // it has to be called before any other attributes
                     // so I guess that means there has to be some external means to kick it off :/
-                })
-            })
+                // })
+            // })
             // for the attribute change listeners on each geodesy element...
             // registergeodesy will take a newly created geodesy element, and attach attributechanged callbacks
             // some of those callbacks are going to need the style tag controlling the geodesy tag.
@@ -76,4 +116,3 @@
         </script>
     </body>
 </html>
-
