@@ -1,11 +1,10 @@
 /*
-This provides a getter / setter / emitter API for modifying HTML attributes
+This provides a getter / setter / emitter API for modifying HTML attributes and the state of Form elements
 To replace element.setAttribute('name','nobody') with element.props.name = 'nobody'
 And proviede a hook into being notified of attributes that are changed with this API
-element.onAttributeChanged = function()
+element.addEventListener('propModified', event => {propName, oldValue, newValue} = event.detail)
 */
 (function(){
-    // eventually this form will be able to submit a request and have the SVG generated server side so I don't have to rely on javascript anymore
 
     function updateAttribute(prop, newValue){
         let attributeChange = {propName: prop, oldValue: this.getAttribute(prop)}
@@ -29,10 +28,13 @@ element.onAttributeChanged = function()
     Object.defineProperties(HTMLElement.prototype, {
         props: {
             get(){
-                let props = Array.from(this.attributes, attr => ({
-                    [attr.name]: attr.value
-                })).reduce((a, n) => Object.assign(a, n),{}) // You would think you could do .reduce(Object.assign), but assign is variadic, and reduce passes the original array as the 4th argument to its callback, so you would get the original numeric keys in your result if you passed all 4 arguments of reduce to Object.assign. So, explicitely pass just 2 arguments, accumulator and next.
-                
+                // if this.tagName = 'form', I could iterate through 
+                let props = {}
+
+                Object.assign(props, ...Array.from(this.attributes, 
+                    attr => ({[attr.name]: attr.value})
+                ))
+
                 return new Proxy(props, {
                     set: (_, prop, value) => {
                         updateAttribute.call(this, prop, value)
@@ -44,10 +46,56 @@ element.onAttributeChanged = function()
                 })
             },
             set(data){
-                Object.keys(data || {}).forEach(key => {
-                    updateAttribute.call(this, key, data[key])
+                Object.entries(data || {}).forEach(([propName, newValue]) => {
+                    updateAttribute.call(this, propName, newValue)
                 })
             }
-        }
+        },
+        formprops: {
+            // if this.tagName != 'form' throw error
+            get(){
+                let props = {}
+                Array.from(this.querySelectorAll('input, select, textarea'), inputElement => {
+                    switch(inputElement.type){
+                        case 'checkbox':
+                            props[inputElement.name] = inputElement.checked
+                            break
+                        case 'radio':
+                            if(inputElement.checked){
+                                props[inputElement.name] = inputElement.value
+                            }
+                            break
+                        default:
+                            props[inputElement.name] = inputElement.value
+                    }
+                })
+                // later could add a proxy around props to allow setting one formprop at a time, but for updating the form from an object's props its not needed
+                return props
+            },
+            set(data){
+                // for each prop in the new object, find all the input elements that may be in control of it and update their state to match the new data
+                Object.entries(data).forEach(([propName, newValue]) => {
+                    Array.from(this.querySelectorAll(`[name="${propName}"]`), inputElement => {
+                        // maybe check that newValue is different than current value before setting the value of an input
+                        // if setting the input fires a input event, target.props will be written again and lead to infinite recursion
+                        switch(inputElement.type){
+                            case 'checkbox':
+                                // newValue will be the string true or false, set checkbox to checked if string is 'true'
+                                inputElement.checked = (newValue === "true")
+                                break
+                            case 'radio':
+                                // necesitates using 'value' to represent the target value
+                                // newValue will be the name of the radio button it corresponds to, set radio to checked if it has the 'value' of the prop
+                                inputElement.checked = (newValue === inputElement.value)
+                                break
+                            default:
+                                // everything else should accept its value being overwritten 
+                                inputElement.value = newValue
+                        }       
+                    })
+                })
+            }
+        },
+        // later, styleprops to get and set css custom properties
     })  
 })()
