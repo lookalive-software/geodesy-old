@@ -52,10 +52,6 @@ window.controlpanel = function(template, options = {}){
     ).querySelector('form')
 
     formElement.addEventListener('input', function(event){
-        console.log("EVENT TARGET", event.target)
-        console.log("THIS", this)
-        // console.log("THIS.TARGET", this.target) // why did form.target get the radiochecklist???
-
         let target = document.getElementById(this.props.target)
         if(!target){
             return null

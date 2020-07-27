@@ -43,11 +43,15 @@
                             event.preventDefault()
                             let geoid = geodesy.getRandomID()
                             let formElement = document.getElementById(this.props.target)
-                            document.body.appendChild(
-                                createElementary({'x-geodesy': Object.assign({id: geoid}, formElement.formprops)})
-                            )
-                            document.getElementById(geoid)
-                            formElement.props.target = geoid // sets the formElement to a new target
+                            let geodesyElement = createElementary(
+                                {'x-geodesy': {id: geoid}}
+                            ).querySelector('x-geodesy')
+                            console.log("geodesyElement", geodesyElement)
+                            document.body.appendChild(geodesyElement)
+                            geodesyElement.addEventListener('propModified', geodesy.propModified)
+                            geodesyElement.props = formElement.formprops
+                            // after the geodesyElement has its props applied, change the target of the form
+                            formElement.props.target = geoid // triggers form reflow
                             this.prepend(
                                 createElementary(templates.radioLayerTemplate(geoid))
                             )

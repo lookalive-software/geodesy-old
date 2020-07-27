@@ -7,9 +7,6 @@ window.geodesy = {
         // keep a reference to the style sheet
         // kvetch the motif information
         // kvetch.get(`/cache/${geodesy.props.motif}/motif`).then(motifData => {
-        element.appendChild(createElementary(
-            motifStyle(element.id, window.cache[element.props.motif].motif)
-        ))
             // needed to do this in control panel too
             // but that only happens when its first connected
             // this re-fires the propmodified events to the form upon creation
@@ -43,8 +40,8 @@ window.geodesy = {
             } else {
                 // otherwise fetch data and create new set of norms
                 let nextNorm = window.cache[element.props.motif].norms[normIndex]
-                element.appendChild(createElementary(normTemplate(normIndex, nextNorm)))
-                setTimeout(()=>element.lastChild.classList.toggle('visibility'), 5) // wait til next tick to set visibility, trigger animation
+                element.appendChild(createElementary(templates.normTemplate(normIndex, nextNorm)))
+                setTimeout(()=> element.lastChild && element.lastChild.classList.toggle('visibility'), 5) // wait til next tick to set visibility, trigger animation
             }
             setTimeout(
                 () => geodesy.resize(element),
@@ -98,7 +95,9 @@ window.geodesy = {
             // document.querySelector(`form[target="${element.props.id}"]`).remove()
         })
     },
-    propModified: function({propName, oldValue, newValue}){
+    propModified: function(event){
+        let {propName, oldValue, newValue} = event.detail
+        console.log("called prop modified", this)
         // this propModifiedCallback is called with 'this' as the target element of the form.
         switch(propName){
             // maybe some photography settings

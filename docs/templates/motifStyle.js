@@ -23,7 +23,7 @@ window.templates.motifStyle = function(){
                 }
             }))
         ),{
-        "geodesy":{
+        "x-geodesy":{
             "position": "absolute",
             "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
             "left": `Calc(50vw - (var(--radius) / 2))`
