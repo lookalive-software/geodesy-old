@@ -21,71 +21,50 @@
 // a form has a target, the 'props' value of the form is applied to the target on change, target.props = this.form
 // for the 
 
-window.controlpanel = function(template, callback, target_id){
-    // here is where I know all my inputs...
-    // create form with a target of the element id
-    // lookup the target
-    // set up a 
-    // let formhtml = 
-    let controls = {}
-    let formTemplate = {"form": {"childNodes": template }}
-    if(target_id) formTemplate.form.target = target_id
-
-    let formFragment = createElementary(formTemplate)
-    let target = document.getElementById(target_id)
-
-    if(!target) return formFragment
-
-    // if there is a target, we're not done
-// on submit, iterate through input/select/textarea and grab their values as props,
-// and create a {geodesy: props} element with that, no use that newly created element to create a new controlpanel
-// 
-
-// the find all the inputs and iterate through them
-    Array.from(formFragment.querySelectorAll(`input, select, textArea`), function(inputElement){
-        // create a set of references for an input that will need to be updates to a prop update...
-        controls[inputElement.name] = inputElement
-        // attach a listener to set props on the target with the value
-        inputElement.addEventListener('input', event => {
-            // check type, if checkbox send .checked
-            if(event.target.type == 'checkbox'){
-                target.props[event.target.name] = event.target.checked
-            } else {
-                target.props[event.target.name] = event.target.value
-            }
-            // switch(event.target.type){
-            //     case 'checkbox':
-            //         target.props[event.target.name] = event.target.checked
-            //         break
-            //     case 'radio':
-            //         target.props[event.target.name] = event.target.id
-            //         break
-            //     default:
-            //         target.props[event.target.name] = event.target.value
-
-            // }
-        })
-    })
+// form#layers[target='form#props'], as a controlpanel, any change to an input on form#layers updates the props on form#props (just the radio[name=target] value)
+    // every input[type=radio] created is going to have a 'value' which matches the uuid of a geodesy, so when any geodesy title changes, form#layers should update the input[name=geodesy_id], 
+    // form#layers has the 'create new space' button, 
+    // basically each of these should be a 'functional' component, call a function to generate it, including stylesheets...
+    // so load all of the support scripts, and load all of the components, some of which are global style components, so templates might be seperated by head/body
+    // form
+// form#props[target='geodesy#id'] as a control panel, any change to any input is a {k:v} input[name]:input.value applied to target.props
+// form#props can have an 'onsubmit' listener which receives the details of the props, so onsubmit a formprops is prepared and emitted as event.details
+    // so when submitted, 'copy2 of 234543' (use nextidnum()?) is used as the new title ... will propogate updates to form#layers 
+    // create new geodesy with event.details, set propModified, reset props to initialize geodesy,
+        // then set 'propModified' listener to keep form#props up to date with changes to geoesy -- only if event.target.id = this.target
+        // so each geodesy has a propModified listener that goes back to form#props, 
+        // and an eventlistener that goes back to form#layers, it will find the input with the name 'title' and set its new value...
+        // geodesy.onpropmodified = event => radio#geoid 
+// form#props is going to have to watch its own props
+// form#props.addeventListener('onpropmodified') when target is changed, find the target and reset its props
+    // targetElement = document.getElementById(target); targetElement.props = targetElement.props
 
     // 
-    target.addEventListener('propModified', (event) => {
-        let {propName, oldValue, newValue} = event.detail
-        // if a change occured, and a control exists, set the value of that input
-        if(controls[propName]){
-            controls[propName].value = newValue
-            // this probably doesn't work for radio buttons
-            // they have the same propname 
-            // for radio, will have to iterate and pick the one with the id of the value
-            // if propname is 'checkbox', set .checked to true or false, 
+function attachInputListeners(inputElement){
+
+}
+
+window.controlpanel = function(template, options = {}){
+    // let {props, onsubmit, onpropmodified} = options // later
+
+    let formElement = createElementary(
+        {"form": Object.assign(options.props, {"childNodes": template })}
+    ).querySelector('form')
+
+    formElement.addEventListener('input', function(event){
+        console.log("EVENT TARGET", event.target)
+        console.log("THIS", this)
+        // console.log("THIS.TARGET", this.target) // why did form.target get the radiochecklist???
+
+        let target = document.getElementById(this.props.target)
+        if(!target){
+            return null
+        } else if(event.target.type == 'checkbox'){
+            target.props[event.target.name] = event.target.checked // sets the targets property as "true" or "false"
+        } else {
+            target.props[event.target.name] = event.target.value // sets the target property to match the form value
         }
-        callback.call(target, {propName, oldValue, newValue}) // then use the actual callback
     })
 
-    // trigger propModified events to update form to attribute values on target
-    target.props = target.props
-    // can't do this because I need style to exist before actually calling all the listeners
-    // probably a bad design
-    // if only there was a way to manage lifecycle
-    // target.props = target.props // should populate form with values already on the target
-    return formFragment
+    return formElement
 }

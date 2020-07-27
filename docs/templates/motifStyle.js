@@ -1,5 +1,7 @@
-// creates a global function that can be run when you're ready to append the global style for norms and polygons etc
-window.motifStyle = function(){
+
+window.templates = window.templates || {}
+window.templates.motifStyle = function(){
+    if(!window.cache) throw new Error("motif style assumes that a cache of motifNames exists")
     // how about on creation, I iterate through the required values, throw an error if one is missing
     // so I just have to create an object entry for each of the vars
     // and then when the form attaches itself to the style form, it can scan for each of these vars and keep reference to their selectorText

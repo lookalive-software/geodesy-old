@@ -1,8 +1,33 @@
-Front-end architecture:
+# Geodesy
+Blank space occurs at a new address
+Pick a random address if you don't want to collide with anything
+Later, the entire address space will be able to be compressed via hilbert curves so the 'spatial arrangement' of address space can be mapped
+
+Each blank space can be made to have its own 'shape' and its own material properties, basically the lattice and polygons chosen determine if one space is 'similar' to another, but they still have a distance in address space, maybe they will be near each other in colorspace or densityspace or lexical space or hashspace...
+
+Geodesy refers to measuring both the shape of the planet we're standing on and the location of our planet in space, requiring the measurement of space itself.
+
+In lookalive geodesy, instead of standing on a planet, you are immersed in virtual arrangements of polygons, each with embedded content / data, 
+with design tools that encourage each 'geoid/geode' at a particular address to have a unique shape (and by its nature, a unique place in the local or global address space)
+
+# on page load
 
 A blank page is loaded (hopefully very quickly, but static site has to wait for polygon caches -- unless I seperate out the motif data from the larger json files -- serverside generated pages will be much faster to first byte, important data tables can be accessed on the fly via json API)
 
-Once prerequisite data is fetched (Promise.all...) a form is built with no target in particular. A 'create new space' button at the top uses the current values of this form to append a 'geodesy' object, attach its propModified listeners, and then reset its props to trigger all of its local style properties initializing, and fetching of geometry, building out its shells of polygons.
+Once prerequisite data is fetched (Promise.all...), two form components are added to the page -- form#layer and form#props
+
+form#layer includes a 'create new space' submit button at the bottom,
+    onsubmit, uses form#props.propsfromform to append a 'geodesy' object with its attributes set
+        geodesyElement.id = creates a new geodesy id
+        form#props.props.target = geodesyElement.id
+        geodesyElement.onpropmodified = geodesy.propmodified 
+        geodesyElement.onpropmodified = event => form#props.formfromprops = event.details
+
+
+
+    attach 2 propmodified listeners, one of which is geodesy.propModified, the geodesy component's own instructions for self-modification
+    
+    and then reset its props to trigger all of its local style properties initializing, and fetching of geometry, building out its shells of polygons.
 
 Each geodesy also gets a 'propmodified' listener that allows the form to react to programmatic changes made to geodesies. But the form is only focused on one geodesy at a time.
 
