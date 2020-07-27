@@ -107,16 +107,16 @@ window.templates.formPropsTemplate = () => ([
             // drop down, options: deep field, reflecting pool, rule 120 etc... river delta
             {"label": [
                 "example",
-                {"select name='hyper-url'": [
+                {"select name='hyper-image'": [
                     {"option": {"value": "", "childNodes": [" "]}},
-                    {"option": {"value": "/glaze/water caustic.gif", "childNodes": ["water caustic.gif"]}},
-                    {"option": {"value": "/glaze/black white caustic.gif", "childNodes": ["black white caustic.gif"]}},
+                    {"option": {"value": "/glaze/caustic1.gif", "childNodes": ["water caustic.gif"]}},
+                    {"option": {"value": "/glaze/caustic2.gif", "childNodes": ["black white caustic.gif"]}},
                     {"option": {"value": "/glaze/fabric.png", "childNodes": ["fabric.png"]}},
                     {"option": {"value": "/glaze/neighbors108.png", "childNodes": ["neighbors108.png"]}},
                     {"option": {"value": "/glaze/4octagon20i2j2.png", "childNodes": ["4octagon20i2j2.png"]}},
                     {"option": {"value": "/glaze/honeycomb34i3j3.png", "childNodes": ["honeycomb34i3j3.png"]}},
                     {"option": {"value": "/glaze/rule90.png", "childNodes": ["rule90.png"]}},
-                ]}
+                ]}  
             ]},
             {"label":[
                 "image url",

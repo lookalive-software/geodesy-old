@@ -19,10 +19,10 @@ window.geodesy = {
         // call geodesy resize, it will graph the motif name off the element and decide what to do with the length attributes
     },
     resize: function(element){
-        console.log("called resize")
-
+        // console.log("called resize")
+        // might reset props to trigger bitmap
         let visible = Array.from(element.querySelectorAll('norm.visibility'))
-        console.log("VISIBLE", visible)
+        // console.log("VISIBLE", visible)
         if(visible.length < element.props.shells){ // implicit conversion from string to number for comparison
         // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
     
@@ -97,7 +97,7 @@ window.geodesy = {
     },
     propModified: function(event){
         let {propName, oldValue, newValue} = event.detail
-        console.log("called prop modified", this)
+        // console.log("called prop modified", this)
         // this propModifiedCallback is called with 'this' as the target element of the form.
         switch(propName){
             // maybe some photography settings
@@ -162,7 +162,9 @@ window.geodesy = {
                 break
             case 'motif':
                 if(newValue != oldValue){
-                    geodesy.destroy(this).then(()=> geodesy.create(this))
+                    geodesy.destroy(this).then(()=> {
+                        geodesy.create(this)
+                    })
                 }
                 // what to do when the motif has changed?
                 // delete current stylesheet

@@ -13,11 +13,11 @@ window.templates.formStyle = () => (
             "justify-content":"flex-start"
         },
         "form":{
-            // "z-index":"1",
+            "z-index":"1",
             "padding": "10px 0",
             "width":"280px",
             "background":"#d3d3d37d",
-            // "position":"absolute",
+            "position":"relative",
             "border":"1px solid rgba(0,0,0,0.2)",
 
             "display":"flex",

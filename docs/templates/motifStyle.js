@@ -25,6 +25,7 @@ window.templates.motifStyle = function(){
         ),{
         "x-geodesy":{
             "position": "absolute",
+            "--twist":"0.25turn",
             "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
             "left": `Calc(50vw - (var(--radius) / 2))`
         },
@@ -101,7 +102,7 @@ window.templates.motifStyle = function(){
             "width":"inherit",
             "height":"inherit",
             "background":"var(--hyper-color)",
-            "background-image": "var(--hyper-url) !important", // fuuuuu mixed up what I meant by "foreground" and "background"
+            "background-image": "var(--hyper-image) !important", // fuuuuu mixed up what I meant by "foreground" and "background"
             "background-size": "var(--hyper-zoom)", // "image url settings should apply to "foreground" or better yet one for each
             "background-position":"center",
             "position":"absolute",
@@ -112,7 +113,7 @@ window.templates.motifStyle = function(){
         // maybe later there can be an option to 
         // randomize or just randomly shift the location of an image you"re zoomed in on
         // so you can brake up the regularity a bit by showing different segments of the image
-        [`[bg-counter-rotate="true"] target:before`]:{
+        [`[hyper-counter-rotate="true"] target:before`]:{
             "transform":`scale(2) rotate(var(--spin)) !important`
         }
     })}
