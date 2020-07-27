@@ -22,6 +22,7 @@ window.motifStyle = function(){
             }))
         ),{
         "geodesy":{
+            "position": "absolute",
             "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
             "left": `Calc(50vw - (var(--radius) / 2))`
         },
@@ -51,7 +52,7 @@ window.motifStyle = function(){
             "bottom": "0",
             "transition":"transform 0.5s", // I should extract these, is this for size probable?
             // the background was on a :before element, I could apply scale to it when it dissapears
-            "background": "var(--infracolor)",
+            "background": "var(--infra-color)",
             "pointer-events":"all",
         },
     // polygon has a clippath polygon
@@ -97,9 +98,9 @@ window.motifStyle = function(){
         ]:{
             "width":"inherit",
             "height":"inherit",
-            "background":"var(--fg-color)",
-            "background-image": "var(--bg-url) !important", // fuuuuu mixed up what I meant by "foreground" and "background"
-            "background-size": "var(--bg-zoom)", // "image url settings should apply to "foreground" or better yet one for each
+            "background":"var(--hyper-color)",
+            "background-image": "var(--hyper-url) !important", // fuuuuu mixed up what I meant by "foreground" and "background"
+            "background-size": "var(--hyper-zoom)", // "image url settings should apply to "foreground" or better yet one for each
             "background-position":"center",
             "position":"absolute",
             "transition":"transform .5s",

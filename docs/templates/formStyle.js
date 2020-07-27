@@ -4,11 +4,11 @@ window.formStyle = function(){
         "display":"none"
     },
     "form":{
-        "z-index":"1",
+        // "z-index":"1",
         "padding": "10px 0",
         "width":"280px",
         "background":"#d3d3d37d",
-        "position":"absolute",
+        // "position":"absolute",
         "border":"1px solid rgba(0,0,0,0.2)",
 
         "display":"flex",
@@ -54,17 +54,18 @@ window.formStyle = function(){
         "justify-content":"space-between",
         "white-space":"nowrap",
         "align-items":"center",
-    },
-    "fieldset > label, fieldset > section":{
         "margin-bottom":"5px"
     },
+    // "fieldset > label, fieldset > section":{
+    //     "margin-bottom":"5px"
+    // },
     "#linearpaint, #drawerase": {
         "justify-content":"center",
     },
     "label > *, section > *": {
         "margin": "0 5px"
     },
-    "input[type=\"text\"]": {
+    "input[type=\"text\"], select": {
         "width":"60%"
     },
     "input[type=\"radio\"]": {

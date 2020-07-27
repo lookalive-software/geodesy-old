@@ -1,7 +1,7 @@
 window.geodesy = {
     resize_delay: 50,
     getRandomID: () => Math.random().toString(36).match(/[a-z]/g).join(''),
-    create: element => {
+    create: function(element){
         console.log("called create")
         if(!element.id) throw new Error("Cannot create a geodesy from an element with no ID")
         // keep a reference to the style sheet
@@ -21,10 +21,11 @@ window.geodesy = {
         // attach the style tag, call resize and it will start kvetching position data and creating the norms...
         // call geodesy resize, it will graph the motif name off the element and decide what to do with the length attributes
     },
-    resize: element => {
+    resize: function(element){
         console.log("called resize")
 
-        let visible = element.querySelectorAll('norm.visibility')
+        let visible = Array.from(element.querySelectorAll('norm.visibility'))
+        console.log("VISIBLE", visible)
         if(visible.length < element.props.shells){ // implicit conversion from string to number for comparison
         // current number of children is the index into the next position. If I have 2 children, they are index 0 and 1, so the next child is index 2.
     
@@ -42,7 +43,7 @@ window.geodesy = {
             } else {
                 // otherwise fetch data and create new set of norms
                 let nextNorm = window.cache[element.props.motif].norms[normIndex]
-                element.appendChild(createElementary(normData(normIndex, nextNorm)))
+                element.appendChild(createElementary(normTemplate(normIndex, nextNorm)))
                 setTimeout(()=>element.lastChild.classList.toggle('visibility'), 5) // wait til next tick to set visibility, trigger animation
             }
             setTimeout(
@@ -73,7 +74,7 @@ window.geodesy = {
     // give it more than one layer, retain access to controls of previous layer
     // hide the controls
     
-    destroy: element => {
+    destroy: function(element){
         console.log("called destroy")
         return new Promise(resolve => {
             // then delete child.
@@ -97,21 +98,21 @@ window.geodesy = {
             // document.querySelector(`form[target="${element.props.id}"]`).remove()
         })
     },
-    propModified: ({propName, oldValue, newValue}) => {
+    propModified: function({propName, oldValue, newValue}){
         // this propModifiedCallback is called with 'this' as the target element of the form.
         switch(propName){
             // maybe some photography settings
             case 'hyper-image':
             case 'infra-image':
-                this.style.setProperty(propName, `url(${newValue})`); break;
+                this.style.setProperty('--' + propName, `url(${newValue})`); break;
             case 'hyper-zoom':
-                this.style.setProperty(propName, newValue + '%'); break;
+                this.style.setProperty('--' + propName, newValue + '%'); break;
             case 'hyper-color':
             case 'infra-color':
             case 'backoff':
-                this.style.setProperty(propName, newValue); break;
+                this.style.setProperty('--' + propName, newValue); break;
             case 'radius':
-                this.style.setProperty(propName, newValue + 'px'); break;
+                this.style.setProperty('--' + propName, newValue + 'px'); break;
             case 'shells':
                 geodesy.resize(this)
                 break

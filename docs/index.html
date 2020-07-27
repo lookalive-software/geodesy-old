@@ -19,7 +19,7 @@
         <script src="templates/normTemplate.js"></script> <!-- generates polygons and targets-->
     </head>
     <body id="body">
-        <geodesy
+        <!-- <geodesy
             id="honeycombA"
             shells="15"
             radius="100"
@@ -28,7 +28,23 @@
             backoff="1.05"
             fillmode="merge"
             draw="paint"
-        ></geodesy>
+        ></geodesy> -->
+        <style>
+            body {
+                overflow: hidden;
+            }
+            nav {
+                height: 100%;
+                position: absolute;
+                right: 0;
+                z-index: 1;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+        </style>
+        <nav id="editor">
+
+        </nav>
         <script>
             // attach listener to geodesy, onclick, toggle active class of event.target.
             
@@ -52,11 +68,24 @@
                     formStyle()
                 ]))
                 // document.body.getElementById('nav') // how about focusing a form sets the active element in the title, and jumps to position on screen
-                document.body.appendChild(controlpanel(formTemplate)) // no taret to start
+                editor.appendChild(controlpanel(formTemplate)) // no taret to start
                 // want to make sure when created and destroyed, I use my bitmask and everything to apply old props to new pattern
                 document.querySelector('form:not([target])').addEventListener('submit', event => {
                     event.preventDefault()
-                    let newprops = {id: geodesy.getRandomID()}
+                    // this form element is getting its target reset before calling on, so once the element is created, the form knows where to look
+                    // so geodesy propModified on the contorl panel has to check that geodesy id is current form.props.target
+                    event.target.props.target = geodesy.getRandomID()
+                    // event.target.querySelector('details').removeAttribute('open')
+                    function propsFromForm(formElement){
+                        return {
+
+                            id: formElement.props.target
+                        }
+                    }
+
+                    let newprops = {id: } 
+                    // the target of 
+                    // ID can be a hidden form value... basically 'this form is about to be applied to a new ',
                     Array.from(event.target.querySelectorAll('input, select, textarea'), inputElement => {
                         switch(inputElement.type){
                             case 'checkbox':
@@ -71,13 +100,15 @@
                     })
                     if(!newprops.title){
                         newprops.title = newprops.id
+                    } else {
+                        event.target.querySelector('input[name="title"]').value = ""
                     }
                     console.log(newprops)
                     // if title is blank set randomID as title
                     // if its changed, title is changed, but target + ID stay the random one
 
-                    // document.body.appendChild(createElementary({geodesy: newprops}))
-                    // document.body.appendChild(controlpanel(formTemplate, geodesy.propModified, ))
+                    document.body.appendChild(createElementary({geodesy: newprops}))
+                    editor.appendChild(controlpanel(formTemplate, geodesy.propModified, newprops.id))
                 })
 
                 // on submit.... create a control panel with geodesy.propModified listener
