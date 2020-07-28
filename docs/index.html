@@ -46,15 +46,25 @@
                             let geodesyElement = createElementary(
                                 {'x-geodesy': {id: geoid}}
                             ).querySelector('x-geodesy')
-                            console.log("geodesyElement", geodesyElement)
+
                             document.body.appendChild(geodesyElement)
                             geodesyElement.addEventListener('propModified', geodesy.propModified)
                             geodesyElement.props = formElement.formprops
                             // after the geodesyElement has its props applied, change the target of the form
                             formElement.props.target = geoid // triggers form reflow
-                            this.prepend(
-                                createElementary(templates.radioLayerTemplate(geoid))
-                            )
+
+                            let radioElement = createElementary(
+                                templates.radioLayerTemplate(geoid)
+                            ).querySelector('section')  
+
+                            this.prepend(radioElement)
+                            
+                            geodesyElement.addEventListener('propModified', event => {
+                                if(event.detail.propName == 'title'){
+                                    radioElement.querySelector('fieldset').textContent = event.detail.newValue || "untitled"
+                                }
+                            })
+
                         })
                 document.body.appendChild(controlpanel(
                     templates.formPropsTemplate(),
