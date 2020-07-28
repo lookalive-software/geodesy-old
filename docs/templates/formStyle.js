@@ -6,11 +6,22 @@ window.templates.formStyle = () => (
         },
         "form#formlayers":{
             "height": "25%",
-            "justify-content":"flex-end"
+            "margin-top":"auto",
+        },
+        "form#formlayers > section":{
+            "width": "99%",
+            "text-align":"center"
+        },
+        "form#formlayers > section > label":{
+            "width": "100%",
+        },
+        // "the label next to a checked radio input"
+        "form#formlayers input[type=\"radio\"]:checked ~ label ": {
+            "background":"rgba(100,100,255,0.3)"
         },
         "form#formprops":{
             "height": "69%",
-            "justify-content":"flex-start"
+            // "justify-content":"flex-start"
         },
         "form":{
             "z-index":"1",
@@ -21,15 +32,16 @@ window.templates.formStyle = () => (
             "border":"1px solid rgba(0,0,0,0.2)",
 
             "display":"flex",
-            "overflow":"hidden",
+            "overflow":"hidden auto",
             "flex-direction":"column",
-            "justify-content":"space-evenly",
+            // "justify-content":"space-evenly",
             "align-items":"center",
         },
         "form > button":{
             "border-radius": "8px",
             "padding": "8px 0",
-            "width": "90%"
+            "width": "90%",
+            "margin-top":"auto"
         },
         "#formprops > input:first-child": {
             "width":"90%",
@@ -81,7 +93,8 @@ window.templates.formStyle = () => (
         "input[type=\"checkbox\"]": {
             "width":"20px","height":"20px"
         },
-        "input[type=\"radio\"] ~ label ": {
+        // radio input inside a section
+        "section input[type=\"radio\"] ~ label ": {
             "opacity":"0.5",
             "position":"relative",
             "-webkit-appearance": "button",
@@ -91,7 +104,7 @@ window.templates.formStyle = () => (
             "font-weight":"normal",
             "font-size":"medium"
         },
-        "input[type=\"radio\"]:checked ~ label ": {
+        "section input[type=\"radio\"]:checked ~ label ": {
             "opacity":"1",
             "box-shadow": "3px 2px 1px black",
             "top":"-3px",

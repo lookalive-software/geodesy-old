@@ -23,7 +23,13 @@ window.templates.motifStyle = function(){
                 }
             }))
         ),{
+        "@font-face": {
+            "font-family": "recursive",
+            "src": `url('/docs/fonts/recursive.woff2') format('woff2-variations')`,
+            "font-weight": "300 1000"
+        },
         "x-geodesy":{
+            "font-family":"recursive",
             "position": "absolute",
             "--twist":"0.25turn",
             "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
@@ -109,6 +115,12 @@ window.templates.motifStyle = function(){
             "transition":"transform .5s",
             "content":`""`,
             "transform":"scale(2)"
+        },
+        "target:after":{
+            "display":"flex",
+            "colors":"red",
+            // "content":"var(--content)"
+            "content":"hello"
         },
         // maybe later there can be an option to 
         // randomize or just randomly shift the location of an image you"re zoomed in on
