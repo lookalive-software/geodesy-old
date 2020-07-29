@@ -110,7 +110,7 @@ window.templates.motifStyle = function(){
             "background":"var(--hyper-color)",
             "background-image": "var(--hyper-image) !important", // fuuuuu mixed up what I meant by "foreground" and "background"
             "background-size": "var(--hyper-zoom)", // "image url settings should apply to "foreground" or better yet one for each
-            "background-position":"center",
+            "background-position":"var(--hyper-xoffset) var(--hyper-yoffset)",
             "position":"absolute",
             "transition":"transform .5s",
             "content":`""`,
@@ -126,7 +126,7 @@ window.templates.motifStyle = function(){
         // randomize or just randomly shift the location of an image you"re zoomed in on
         // so you can brake up the regularity a bit by showing different segments of the image
         [`[hyper-counter-rotate="true"] target:before`]:{
-            "transform":`scale(2) rotate(var(--spin)) !important`
+            "transform":`scale(2) rotate(calc(var(--spin) + var(--hyper-image-spin))) !important`
         }
     })}
 }

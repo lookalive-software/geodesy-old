@@ -1,9 +1,11 @@
 (function(){
-    var updatePos;
+    // var updatePos;
     // var allContent = document.documentElement;
 
     window.altspace = function(parentElement, reverse="draw"/* maybe name of attribute to watch for true or false */){
         
+        let formprops = document.getElementById('formprops')
+
         function paintHandler(event){
             event.preventDefault();
             console.log(event)
@@ -15,10 +17,13 @@
         }
 
         parentElement.addEventListener('mousedown', event => {
-            console.log(event)
-            // i have to go back and make the css work for alt polygons 
-            paintHandler(event)
-            parentElement.addEventListener('mousemove', paintHandler)
+            console.log("EVENT TARGET", event.target)
+            console.log(parentElement.id, formprops.props.target)
+
+            if(parentElement.id == formprops.props.target){
+                paintHandler(event)
+                parentElement.addEventListener('mousemove', paintHandler)
+            }
         })
         document.addEventListener('mouseup', () => {
             parentElement.removeEventListener('mousemove', paintHandler)
@@ -26,7 +31,7 @@
         // check if event.altKey, whatever event, 
         // use event.target of mousedown to paint or not to paint
         // but then be listener for all the mouseenter events on all elements, 
-        // 
+        
     }
 
     // allContent.addEventListener('mousedown', function(event){

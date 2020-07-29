@@ -120,7 +120,7 @@ window.templates.formPropsTemplate = () => ([
             ]},
             {"label":[
                 "image url",
-                {"input": {"type":"text", "name":"hyper-url" }},
+                {"input": {"type":"text", "name":"hyper-image" }},
             ]},
             {"label":[
                 "zoom",
@@ -128,11 +128,15 @@ window.templates.formPropsTemplate = () => ([
             ]},
             {"label":[
                 "x offset",
-                {"input": {"type":"range", "min":"-100","max":"100","name":"hyper-xoffset" }},
+                {"input": {"type":"range", "value":"50", "min":"0","max":"100","name":"hyper-xoffset" }},
             ]},
             {"label":[
                 "y offset",
-                {"input": {"type":"range", "min":"-100","max":"100","name":"hyper-yoffset" }},
+                {"input": {"type":"range", "value":"50", "min":"0","max":"100","name":"hyper-yoffset" }},
+            ]},
+            {"label":[
+                "rotation",
+                {"input": {"type":"range", "value":"0", "min":"-3.14159","max":"3.14159","name":"hyper-image-spin" }},
             ]},
             {"label":[
                 "center facing",

@@ -7,7 +7,7 @@
         <script src="js/kvetch.js"></script>
         <script src="js/propmodified.js"></script>
         <script src="js/controlpanel.js"></script>
-        <!-- <script src="js/shiftspace.js"></script> -->
+        <script src="js/shiftspace.js"></script>
     
         <script src="js/geodesyUtil.js" defer="true"></script>
         <!-- <script src="js/outTurf.js" defer="true"></script> -->
@@ -50,6 +50,7 @@
                             document.body.appendChild(geodesyElement)
                             geodesyElement.addEventListener('propModified', geodesy.propModified)
                             geodesyElement.props = formElement.formprops
+                            altspace(geodesyElement)
                             // after the geodesyElement has its props applied, change the target of the form
                             formElement.props.target = geoid // triggers form reflow
 

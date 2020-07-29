@@ -105,11 +105,15 @@ window.geodesy = {
             case 'infra-image':
                 this.style.setProperty('--' + propName, `url(${newValue})`); break;
             case 'hyper-zoom':
+            case 'hyper-xoffset':
+            case 'hyper-yoffset':
                 this.style.setProperty('--' + propName, newValue + '%'); break;
             case 'hyper-color':
             case 'infra-color':
             case 'backoff':
                 this.style.setProperty('--' + propName, newValue); break;
+            case 'hyper-image-spin':
+                this.style.setProperty('--' + propName, newValue + 'rad'); break;
             case 'radius':
                 this.style.setProperty('--' + propName, newValue + 'px'); break;
             case 'shells':
