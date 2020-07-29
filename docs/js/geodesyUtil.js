@@ -89,7 +89,7 @@ window.geodesy = {
                     element.lastChild.remove()
                 }
                 resolve()
-            }, visible.length * geodesy.delay + geodesy.delay)
+            }, visible.length * geodesy.resize_delay + geodesy.resize_delay)
             // destroy tag...
             // when the form is removed, I'll want to call destroy and then set a timeout to actually destroy it
             // document.querySelector(`form[target="${element.props.id}"]`).remove()
@@ -176,7 +176,9 @@ window.geodesy = {
                 break
             case 'motif':
                 if(newValue != oldValue){
+                    this.setAttribute('motif', oldValue)
                     geodesy.destroy(this).then(()=> {
+                        this.setAttribute('motif', newValue) // HACKY well, setAttribute skips the propModified API so this doesn't loop
                         geodesy.create(this)
                     })
                 }
