@@ -70,17 +70,12 @@ window.templates.motifStyle = function(){
         // joined -- polygon has its bg-color, and its --globalscale is set to 1.05 to overlap
         // seperate -- polygon has its bg-color, its --global scale is same as the target
         // none -- polygon has transparent background. 
+
         "[fillmode=\"merge\"] polygon": {
             "transform":
                 `scale(calc(1.05 * var(--localscale))) ` +
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
-        },
-        [
-            `[fillmode="merge"] target, ` + 
-            `[fillmode="none"] target`
-        ]: {
-            "transform": "scale(var(--backoff))"
         },
         "[fillmode=\"split\"] polygon": {
             "transform":
@@ -91,7 +86,15 @@ window.templates.motifStyle = function(){
         "[fillmode=\"none\"] polygon": {
             "background": "transparent",
             "transform":
+                `scale(calc(1.05 * var(--localscale))) ` + 
+                `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
+        },
+        [
+            `[fillmode="merge"] target, ` + 
+            `[fillmode="none"] target`
+        ]: {
+            "transform": "scale(var(--backoff))"
         },
         "target":{
             "left":"0",
