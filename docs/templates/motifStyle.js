@@ -93,18 +93,14 @@ window.templates.motifStyle = function(){
             "transform":
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
-        [` target`]:{
+        "target":{
             "left":"0",
             "top":"0",
             "background":"transparent"
             // maybe scale here
             // "transition":"all 0.25s"
         }, // close style object, next argument for Object.assign is an array of polygon selectors
-
-        [ // if EITHER the norm OR the target is set to "active", apply the background 
-            ` norm[active="true"] target:before,` +
-            ` norm target[active="true"]:before`
-        ]:{
+        "polygon[active=\"true\"] target:before":{
             "width":"inherit",
             "height":"inherit",
             "background":"var(--hyper-color)",
@@ -126,7 +122,7 @@ window.templates.motifStyle = function(){
         // randomize or just randomly shift the location of an image you"re zoomed in on
         // so you can brake up the regularity a bit by showing different segments of the image
         [`[hyper-counter-rotate="true"] target:before`]:{
-            "transform":`scale(2) rotate(calc(var(--spin) + var(--hyper-image-spin))) !important`
+            "transform":`scale(2) rotate(calc(var(--spin) + var(--hyper-image-spin))) !important` // SLOWWWW
         }
     })}
 }

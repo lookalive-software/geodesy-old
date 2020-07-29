@@ -5,6 +5,7 @@
 
 // want-to-haves
 // infrashadow, hypershadow, offset x and y, inset or outset. very bad performance with css tho. Maybe SVG will be better.
+let max_shells = 50 // boost when recalculating tables
 
 window.templates = window.templates || {}
 window.templates.formPropsTemplate = () => ([
@@ -34,7 +35,7 @@ window.templates.formPropsTemplate = () => ([
         {"label": [
             "shells", 
             {"input":{
-                "name":"shells","type":"number","min":"1","max":"50","step":"1","value":"10"
+                "name":"shells","type":"number","min":"1","max": max_shells,"step":"1","value":"10"
             }}
         ]},
         {"label": [
@@ -84,10 +85,10 @@ window.templates.formPropsTemplate = () => ([
             {"summary": [{"legend": ["Linear Paint"]}]},
             {"label id='linearpaint'":[
                 "a",
-                {"input": {"type":"number", "min":"0","max":"50","step":"1","placeholder":"a","name":"a"}},
+                {"input": {"type":"number", "min":"0","max":max_shells,"step":"1","placeholder":"a","name":"a"}},
                 "x",
                 "+",
-                {"input": {"type":"number", "min":"0","max":"50","step":"1","placeholder":"b", "name":"b"}},
+                {"input": {"type":"number", "min":"-1","max":max_shells,"step":"1","placeholder":"b", "name":"b"}},
                 "b"
             ]}
         ]}
@@ -124,7 +125,7 @@ window.templates.formPropsTemplate = () => ([
             ]},
             {"label":[
                 "zoom",
-                {"input": {"type":"range", "min":"50","max":"500","name":"hyper-zoom" }},
+                {"input": {"type":"range", "min":"10","max":"400","name":"hyper-zoom" }},
             ]},
             {"label":[
                 "x offset",

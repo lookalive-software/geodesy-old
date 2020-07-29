@@ -134,12 +134,11 @@ window.geodesy = {
                 // // eat through the bitmask array 8 elements at a time, converting them to hexadecimal.
                 // this.props.bitmask = "ff"
                 // calculate new bitmask from ax+b
-                let norms = Array.from(this.querySelectorAll('norm'))
-                let bitmask = Array.from({length: norms.length}).fill(false)
-                let a = parseInt(this.props.a) || 0 // hilarious, got but by duck typing, attribute was a string, "1" + 0 = 10 !
-                let b = parseInt(this.props.b) || 0
+                // let bitmask = Array.from({length: norms.length}).fill(false)
+                let a = parseInt(this.props.a) || 0 // hilarious, got bit by duck typing, attribute was a string, "1" + 0 = 10 !
+                let b = parseInt(this.props.b) || -1 // if b is NaN I want to default to -1 -- draw nothing !
                 let x = 0
-                console.log({x,a,b, axb: (a * x + b)})
+                // console.log({x,a,b, axb: (a * x + b)})
                 // check that the solution is within my bitmask length
                 // and then set that length as 'true' according to our ax + b rule
 
@@ -151,16 +150,27 @@ window.geodesy = {
                 // iterate through this newly create true/false pattern
                 // and iterate through all the targets (is the order deterministic, in order of the cached data?)
                 // I need the bitmask activate routine running whenever norms are created
-                norms.map((normElement, normIndex) => {
-                    normElement.props.active = false // clear out 
-                })
-                norms.map((normElement, normIndex) => {
-                    // for each element there is, plug it into ax + b, and set THAT element as active
+                this.querySelectorAll('polygon').forEach(polygon => polygon.props.active = false) // clear out paint
+
+                let norms = this.querySelectorAll('norm')
+
+                if( norms[a * norms.length + b] ){
+                    norms[a * norms.length + b].querySelectorAll('polygon').forEach(polygon => {
+                        polygon.props.active = true 
+                    })
+                }
+                norms.forEach((_, normIndex) => {
+                    // for each norm (or "shell") there is, plug it into ax + b, and set all the polygons under THAT norm as active
+                    // so for a = 2 and b = 1, when normIndex is 0, ax+b = 1, 1st norm is set painted, normIndeex is 1, ax+b = 3, 3rd norm is painted...
+                    // near the end of norms the result of the calculation will be out of range so the if statement just checks that the element is not undefined before trying to settings props
                     if( norms[a * normIndex + b] ){
-                        norms[a * normIndex + b].props.active = true
+                        norms[a * normIndex + b].querySelectorAll('polygon').forEach(polygon => {
+                            polygon.props.active = true 
+                        })
                     }
                     // normElement.props.active = bitmask[normIndex] // this is gonna set the on off value for each of the norms
                 })
+
                 // so that sets the isVisible prop as true or false according to the calculated bitmask Boolean[]
                 // sheet.insertRule(`norm:nth-child(${this.props.a || 1}n + ${this.props.b || 0}) target {!important}`)
                 break

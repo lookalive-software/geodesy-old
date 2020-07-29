@@ -7,12 +7,17 @@
         let formprops = document.getElementById('formprops')
 
         function paintHandler(event){
-            event.preventDefault();
+            event.preventDefault(); // event.target is polygon !
             console.log(event)
+
+            let paintMode = parentElement.props.draw == 'paint'  // draw=paint -> become paiented
+            if(event.altKey) paintMode = !paintMode // flip if alt key is held
+
+            // event.target.props[]
             // check if the current status is different than it needs to be 
             // before calling the expensive props setter on every mousemove
-            if(event.target.firstChild.props.active != event.altKey){
-                event.target.firstChild.props.active = event.altKey
+            if(event.target.props.active != paintMode){
+                event.target.props.active = paintMode
             }
         }
 
