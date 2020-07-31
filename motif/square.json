@@ -1,13 +1,11 @@
 {
     "meta":{
-        "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/octostar.nb",
         "harmonic":["1"]
     },
     "motif":[
         {
-            "basis":[["1","0"],["0","1"]],
+            "basis":[["2","0"],["0","2"]],
             "offset":["0","0"],
-            "scale":"1",
             "polygon":[
                 ["-1","-1"],
                 ["-1","1"],

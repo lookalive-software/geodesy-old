@@ -68,3 +68,12 @@ Each of the \24 subnets can be overlaid ontop of neighboring address spaces, suc
 
 A list implies an 'end', a trajectory.
 Shells and orbs that move around a center imply expansion from a source, and keep that source nearby
+
+# Next step
+Reset all the basii so that scaling factor of 2 is assumed to translate to CSS polygon
+
+The polygons for mathematica are -1 to 1
+CSS polygons are from 0 to 1
+
+So for the lattice from mathematica to be relevant to CSS, I actually need to scale that lattice down by half, so that the 0-1 polygons fit together...
+

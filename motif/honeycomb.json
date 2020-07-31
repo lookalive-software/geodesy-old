@@ -1,23 +1,20 @@
 {
     "meta":{
-        "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/octostar.nb",
+        "notebook": "https://www.wolframcloud.com/obj/jazzyjackson/Published/honeycomb.nb",
         "harmonic":["1"],
-        "themes": [
-            ["10px","10px","gray","#0c0c0c","5.1px"]
-        ]
+        "source": ["honeybees"]
     },
     "motif":[
         {
-            "basis": [["1","0"],["1/2","sqrt(3)/2"]],
-            "offset":["0","0"],
-            "scale":"2/sqrt(3)",
+            "basis": [["0","sqrt(3)"],["3/2","sqrt(3)/2"]],
+            "offset":["1/2", "sqrt(3)/2"],
             "polygon":[
-                ["sqrt(3)/2","1/2"],
-                ["0","1"],
-                ["-sqrt(3)/2","1/2"],
-                ["-sqrt(3)/2","-1/2"],
-                ["0","-1"],
-                ["sqrt(3)/2","-1/2"]
+                ["1/2", "sqrt(3)/2"],
+                ["-1/2", "sqrt(3)/2"],
+                ["-1","0"],
+                ["-1/2", "-sqrt(3)/2"],
+                ["1/2", "-sqrt(3)/2"],
+                ["1","0"]
             ]
         }
     ]

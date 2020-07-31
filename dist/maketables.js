@@ -1,6 +1,7 @@
 "use strict";
 /// <reference path="types/geodesy.d.ts"/>
 Object.defineProperty(exports, "__esModule", { value: true });
+// TODO give it command line options to request a single file be recompiled, instead of recompiling all of them
 // OK so this file is going to have some default value for how many layers of norms to calculate
 // the server will load these files up to provide instant access to all properties
 // a couple of megabytes max.
@@ -67,8 +68,7 @@ fs.readdirSync('./motif').map(function (filename) {
     fs.writeFileSync("./cache/" + name + ".json", JSON.stringify({
         meta: metaData,
         motif: motifData.map(function (polygonData) { return Object.assign(polygonData, {
-            clippath: λ.polygon2clippath(polygonData.polygon),
-            scale: λ.N(polygonData.scale)
+            clippath: λ.polygon2clippath(polygonData.polygon)
         }); }),
         norms: sortedNormData
     }, null, 2));

@@ -18,8 +18,7 @@ window.templates.motifStyle = function(){
                     `[motif="${motifName}"] [polygon="${shapeIndex}"], ` +
                     `[motif="${motifName}"] [polygon="${shapeIndex}"] target`
                 ]: {
-                    "clip-path": shape.clippath,
-                    "--localscale": shape.scale // this was a bad idea, clippath should be equal scale everywhere
+                    "clip-path": shape.clippath
                 }
             }))
         ),{
@@ -32,19 +31,19 @@ window.templates.motifStyle = function(){
             "font-family":"recursive",
             "position": "absolute",
             "--twist":"0.25turn",
-            "top": `Calc(50vh - (var(--radius) / 2))`, // + var(--xoffset) soon
-            "left": `Calc(50vw - (var(--radius) / 2))`
+            "top": `Calc(50vh - var(--radius))`, // + var(--xoffset) soon
+            "left": `Calc(50vw - var(--radius))`
         },
         "norm,  spin,  polygon,  target":{
             "display": "block",
             "position": "absolute",
-            "height": "var(--radius)",
-            "width": "var(--radius)",
+            "height": "calc(2 * var(--radius))",
+            "width": "calc(2 * var(--radius))",
             "pointer-events": "none"
         },
         "norm":{
             "transition":"rotateX .25s",
-            "height": "calc(var(--radius) * var(--norm) + var(--radius))"
+            "height": "calc(var(--radius) * var(--norm) + (var(--radius) * 2))"
         },
         "norm.visibility":{ // visibility applies to both polygon and target, whether the ring is being displayed
             "--twist": "0"
@@ -53,7 +52,7 @@ window.templates.motifStyle = function(){
         // I"m just calculating the visibility of whole norms right now.
         // so, it"s back to the old question of, how do I order all these polygons?
         "spin":{
-            "transform-origin": `calc(var(--radius) / 2) Calc(var(--radius) / 2)`,
+            "transform-origin": `var(--radius) var(--radius)`,
             "height":"inherit",
             "transform": "rotate(var(--spin))"
         },
@@ -73,20 +72,20 @@ window.templates.motifStyle = function(){
 
         "[fillmode=\"merge\"] polygon": {
             "transform":
-                `scale(calc(1.05 * var(--localscale))) ` +
+                `scale(1.05) ` +
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
         "[fillmode=\"split\"] polygon": {
             "transform":
-                `scale(calc(var(--backoff) * var(--localscale))) ` +
+                `scale(var(--backoff)) ` +
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },
         "[fillmode=\"none\"] polygon": {
             "background": "transparent",
             "transform":
-                `scale(calc(1.05 * var(--localscale))) ` + 
+                `scale(1.05) ` + 
                 `rotateX(var(--twist)) ` +
                 `rotate(calc(-1 * var(--spin)))` // counter-spin
         },

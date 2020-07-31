@@ -103,7 +103,7 @@ window.geodesy = {
             // maybe some photography settings
             case 'hyper-image':
             case 'infra-image':
-                this.style.setProperty('--' + propName, `url(${newValue})`); break;
+                this.style.setProperty('--' + propName, `url("${newValue}")`); break;
             case 'hyper-zoom':
             case 'hyper-xoffset':
             case 'hyper-yoffset':
@@ -176,7 +176,7 @@ window.geodesy = {
                 break
             case 'motif':
                 if(newValue != oldValue){
-                    this.setAttribute('motif', oldValue)
+                    this.setAttribute('motif', oldValue || newValue) // only fallback to oldvalue if an old value exists!
                     geodesy.destroy(this).then(()=> {
                         this.setAttribute('motif', newValue) // HACKY well, setAttribute skips the propModified API so this doesn't loop
                         geodesy.create(this)

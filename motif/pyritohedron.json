@@ -1,16 +1,12 @@
 {
     "meta":{
         "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/squeezedstars.nb",
-        "harmonic":["1","1","1"],
-        "themes": [
-            ["3px","3px","white","#aaa","4px"]
-        ]
+        "harmonic":["1","1","1"]
     },
     "motif":[
         {
-            "basis": [["3/2","sqrt(3)/2"],["0","sqrt(3)"]],
+            "basis": [["0","sqrt(3)"],["3/2","sqrt(3)/2"]],
             "offset":["0","0"],
-            "scale":"2",
             "polygon":[
                 ["0"   , "-sqrt(3)/2"],
                 ["1/6" , "-1/(2*sqrt(3))"],
@@ -27,9 +23,8 @@
             ]
         },
         {
-            "basis": [["3/2","sqrt(3)/2"],["0","sqrt(3)"]],
+            "basis": [["0","sqrt(3)"],["3/2","sqrt(3)/2"]],
             "offset":["-1","0"],
-            "scale":"2",
             "polygon": [
                 ["-1/4","sqrt(3)/4"],
                 ["-2/3","0"],
@@ -40,9 +35,8 @@
             ]
         },
         {
-            "basis": [["3/2","sqrt(3)/2"],["0","sqrt(3)"]],
+            "basis": [["0","sqrt(3)"],["3/2","sqrt(3)/2"]],
             "offset":["1","0"],
-            "scale":"2",
             "polygon": [
                 ["1/4","sqrt(3)/4"],
                 ["2/3","0"],
