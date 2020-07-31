@@ -25,6 +25,7 @@ window.templates.formPropsTemplate = () => ([
                 {"option": {"value": "p4octagon", "childNodes": ["p4octagon"], "selected":""}},
                 {"option": {"value": "honeycomb", "childNodes": ["honeycomb"]}},
                 {"option": {"value": "doublesquares", "childNodes": ["doublesquares"]}},
+                {"option": {"value": "alternatetriangles", "childNodes": ["alternatetriangles"]}},
             ]}
         ]},
         {"label": [

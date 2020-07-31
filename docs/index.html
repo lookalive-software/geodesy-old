@@ -25,6 +25,7 @@
             window.cache = {}
             Promise.all([
                 kvetch.get(`/cache/square.json`).then(res => window.cache.square = res),
+                kvetch.get(`/cache/alternatetriangles.json`).then(res => window.cache.alternatetriangles = res),
                 kvetch.get(`/cache/pyritohedron.json`).then(res => window.cache.pyritohedron = res),
                 kvetch.get(`/cache/honeycomb.json`).then(res => window.cache.honeycomb = res),
                 kvetch.get(`/cache/p4octagon.json`).then(res => window.cache.p4octagon = res),
